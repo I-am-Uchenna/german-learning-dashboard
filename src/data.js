@@ -15,13 +15,19 @@ export const EXAM_CATEGORIES = [
   { id: 'grammatik', name: 'Grammatik', nameEn: 'Grammar', icon: '🔤', color: '#FC8181' },
 ];
 
-// ─── VOCABULARY BY THEME AND LEVEL ───
+// ─── VOCABULARY ───
 import { VOCAB_A1, VOCAB_A2, VOCAB_B1 } from './data/vocab'
-export const VOCABULARY = {
-  A1: VOCAB_A1,
-  A2: VOCAB_A2,
-  B1: VOCAB_B1,
-};
+export const VOCABULARY = { A1: VOCAB_A1, A2: VOCAB_A2, B1: VOCAB_B1 };
+
+// ─── EXERCISES (expanded) ───
+import { READING_EX, WRITING_EX, SPEAKING_EX, LISTENING_EX, GUIDED_LESSONS as GL, NUMBER_WORDS as NW, numberToGerman as NTG } from './data/exercises'
+export const READING_EXERCISES = READING_EX;
+export const WRITING_EXERCISES = WRITING_EX;
+export const SPEAKING_EXERCISES = SPEAKING_EX;
+export const LISTENING_EXERCISES = LISTENING_EX;
+export const GUIDED_LESSONS = GL;
+export const NUMBER_WORDS = NW;
+export const numberToGerman = NTG;
 
 // ─── PRONUNCIATION GUIDE (Day 1 essential) ───
 export const PRONUNCIATION = {
@@ -292,210 +298,6 @@ export const GRAMMAR = {
         { q: 'Das Auto ___ repariert. (werden, Präsens)', options: ['wird', 'wurde', 'ist'], answer: 0, hint: 'Präsens Passiv: wird + Partizip II' },
         { q: 'Der Brief ___ gestern geschrieben. (werden, Präteritum)', options: ['wurde', 'wird', 'ist'], answer: 0, hint: 'Präteritum Passiv: wurde' },
         { q: 'Die E-Mail ist von dem Chef ___ worden.', options: ['geschrieben', 'schreiben', 'geschreibt'], answer: 0, hint: 'Perfekt Passiv: ist + Partizip II + worden' },
-      ],
-    },
-  ],
-};
-
-// ─── EXAM PRACTICE: LESEN (Reading) ───
-export const READING_EXERCISES = {
-  A1: [
-    {
-      id: 'r-a1-01',
-      title: 'Anzeigen lesen (Teil 1)',
-      type: 'Goethe A1 / TELC A1',
-      instruction: 'Read the notice and answer the question.',
-      text: `WOHNUNGSANZEIGE\n2-Zimmer-Wohnung in Hamburg-Altona\n55 m², 3. Stock, Balkon\nMiete: 750 € (warm)\nKaution: 2 Monatsmieten\nFrei ab: 01.06.2025\nKontakt: Herr Braun, Tel: 040-555-1234`,
-      questions: [
-        { q: 'How much is the monthly rent?', options: ['550 €', '750 €', '1500 €', '2 Monatsmieten'], answer: 1 },
-        { q: 'When is the apartment available?', options: ['Now', 'June 2025', 'July 2025', 'January 2025'], answer: 1 },
-        { q: 'What floor is the apartment on?', options: ['1st', '2nd', '3rd', 'Ground floor'], answer: 2 },
-      ],
-    },
-    {
-      id: 'r-a1-02',
-      title: 'E-Mail verstehen (Teil 2)',
-      type: 'Goethe A1 / TELC A1',
-      instruction: 'Read the email and answer the questions.',
-      text: `Lieber Merrill,\n\nwillkommen in Hamburg! Ich bin dein Nachbar aus der Wohnung 4B. Mein Name ist Thomas.\n\nAm Samstag mache ich eine kleine Party. Kommst du? Wir fangen um 19 Uhr an. Bring bitte etwas zu trinken mit.\n\nMeine Handynummer ist 0170-123-4567.\n\nViele Grüße\nThomas`,
-      questions: [
-        { q: 'Who is Thomas?', options: ['A colleague', 'A neighbor', 'A teacher', 'A doctor'], answer: 1 },
-        { q: 'When is the party?', options: ['Friday', 'Saturday', 'Sunday', 'Monday'], answer: 1 },
-        { q: 'What should Merrill bring?', options: ['Food', 'Something to drink', 'Music', 'A gift'], answer: 1 },
-      ],
-    },
-  ],
-  A2: [
-    {
-      id: 'r-a2-01',
-      title: 'Informationstext (Teil 1)',
-      type: 'Goethe A2 / TELC A2',
-      instruction: 'Read the information text and answer the questions.',
-      text: `HAMBURGER VOLKSHOCHSCHULE (VHS)\nDeutschkurse für Erwachsene\n\nIntensivkurs A1: Mo–Fr, 9:00–12:30 Uhr\nDauer: 8 Wochen | Preis: 390 €\n\nAbendkurs A2: Di + Do, 18:00–20:30 Uhr\nDauer: 16 Wochen | Preis: 280 €\n\nAnmeldung: Online unter www.vhs-hamburg.de\noder persönlich im Büro (Mo–Fr, 10–16 Uhr)\n\nSie brauchen: Ausweis/Pass, Anmeldeformular.\nFür Ermäßigung: Bescheinigung vom Jobcenter.`,
-      questions: [
-        { q: 'How long does the A1 intensive course last?', options: ['4 weeks', '8 weeks', '16 weeks', '12 weeks'], answer: 1 },
-        { q: 'When is the A2 evening course?', options: ['Mon + Wed', 'Tue + Thu', 'Mon–Fri', 'Sat + Sun'], answer: 1 },
-        { q: 'What do you need for a discount?', options: ['Student ID', 'Jobcenter certificate', 'Health insurance', 'Bank statement'], answer: 1 },
-      ],
-    },
-  ],
-  B1: [
-    {
-      id: 'r-b1-01',
-      title: 'Zeitungsartikel (Teil 2)',
-      type: 'Goethe B1 / TELC B1',
-      instruction: 'Read the article excerpt and answer the questions.',
-      text: `HOMEOFFICE: FLUCH ODER SEGEN?\n\nImmer mehr Unternehmen in Deutschland bieten ihren Mitarbeitern die Möglichkeit, von zu Hause aus zu arbeiten. Eine neue Studie zeigt: 60% der Arbeitnehmer arbeiten mindestens einen Tag pro Woche im Homeoffice.\n\nDie Vorteile liegen auf der Hand: kein Pendeln, flexible Zeiteinteilung und mehr Zeit für die Familie. Allerdings berichten viele auch von Nachteilen: fehlender Kontakt zu Kollegen, Schwierigkeiten bei der Trennung von Arbeit und Privatleben und manchmal auch Einsamkeit.\n\nExperten empfehlen eine Mischung aus Büro- und Heimarbeit — das sogenannte hybride Modell.`,
-      questions: [
-        { q: 'What percentage work from home at least once a week?', options: ['40%', '50%', '60%', '70%'], answer: 2 },
-        { q: 'Which is NOT mentioned as a disadvantage?', options: ['Loneliness', 'Less contact with colleagues', 'Lower salary', 'Difficulty separating work and life'], answer: 2 },
-        { q: 'What do experts recommend?', options: ['Only office work', 'Only home office', 'A hybrid model', 'Fewer working hours'], answer: 2 },
-      ],
-    },
-  ],
-};
-
-// ─── EXAM PRACTICE: SCHREIBEN (Writing) ───
-export const WRITING_EXERCISES = {
-  A1: [
-    {
-      id: 'w-a1-01',
-      title: 'Formular ausfüllen',
-      type: 'Goethe A1 Teil 1',
-      instruction: 'Fill in the registration form with your personal information.',
-      fields: ['Vorname', 'Nachname', 'Geburtsdatum', 'Geburtsort', 'Staatsangehörigkeit', 'Adresse', 'Telefonnummer', 'E-Mail', 'Beruf', 'Familienstand'],
-      tips: 'In Goethe A1, Part 1 of Schreiben asks you to fill in a form. Practice writing your personal details in German format: date = DD.MM.YYYY, phone with country code.',
-    },
-    {
-      id: 'w-a1-02',
-      title: 'Kurze Nachricht schreiben',
-      type: 'Goethe A1 Teil 2',
-      instruction: 'Write a short message (about 30 words) to your colleague. Include: Thank for invitation, say you are coming, ask what to bring.',
-      sampleAnswer: 'Lieber Thomas,\n\nvielen Dank für die Einladung! Ich komme gern am Samstag. Was soll ich mitbringen? Essen oder Getränke?\n\nViele Grüße\nMerrill',
-      tips: 'Always include: greeting (Lieber/Liebe), answer all 3 points, closing (Viele Grüße + name). Keep it simple — short sentences are fine at A1!',
-    },
-  ],
-  A2: [
-    {
-      id: 'w-a2-01',
-      title: 'Persönliche E-Mail',
-      type: 'Goethe A2 / TELC A2',
-      instruction: 'Write an email to a friend (about 50-60 words). You just moved to Hamburg. Write about: 1) your new apartment, 2) your new job, 3) invite your friend to visit.',
-      sampleAnswer: 'Liebe Anna,\n\nich bin jetzt in Hamburg! Meine neue Wohnung ist in Altona. Sie ist klein, aber gemütlich und hat einen Balkon.\n\nMeine Arbeit bei adjoe gefällt mir sehr gut. Die Kollegen sind nett und ich lerne viel über Daten.\n\nKommst du mich besuchen? Im Sommer ist Hamburg besonders schön!\n\nLiebe Grüße\nMerrill',
-      tips: 'Address all 3 points. Use connectors: und, aber, auch, deshalb. Show A2 grammar: Perfekt, Dativ prepositions. Keep sentences varied but not too complex.',
-    },
-  ],
-  B1: [
-    {
-      id: 'w-b1-01',
-      title: 'Formelle Beschwerde',
-      type: 'Goethe B1 / TELC B1',
-      instruction: 'Write a formal complaint email (about 80 words) to your internet provider. Your internet has not been working for 3 days. Include: describe the problem, request a solution, set a deadline.',
-      sampleAnswer: 'Sehr geehrte Damen und Herren,\n\nseit drei Tagen funktioniert mein Internet nicht mehr. Ich habe bereits den Router neu gestartet, aber das Problem besteht weiterhin.\n\nDa ich das Internet für meine Arbeit im Homeoffice brauche, bitte ich Sie dringend, das Problem bis spätestens Freitag zu lösen. Andernfalls muss ich den Vertrag kündigen.\n\nMit freundlichen Grüßen\nMerrill Ejike\nKundennummer: 12345',
-      tips: 'Formal style: Sehr geehrte Damen und Herren / Mit freundlichen Grüßen. Use Konjunktiv II for politeness. Clear structure: problem → impact → request → consequence. Include customer number.',
-    },
-  ],
-};
-
-// ─── SPEAKING PRACTICE ───
-export const SPEAKING_EXERCISES = {
-  A1: [
-    {
-      id: 's-a1-01',
-      title: 'Sich vorstellen',
-      type: 'Goethe A1 Sprechen Teil 1',
-      instruction: 'Introduce yourself. Cover: name, country, city, profession, languages, hobbies.',
-      promptCards: ['Name?', 'Woher?', 'Wohnort?', 'Beruf?', 'Sprachen?', 'Hobbys?'],
-      sampleResponse: 'Ich heiße Merrill. Ich komme aus Nigeria, aber jetzt wohne ich in Hamburg. Ich bin Data Analyst von Beruf. Ich spreche Englisch und ich lerne Deutsch. Meine Hobbys sind Programmieren und Lesen.',
-      tips: 'Speak slowly and clearly. Use simple sentences: Ich heiße... Ich komme aus... Ich bin... von Beruf. Each card = 1-2 sentences.',
-    },
-    {
-      id: 's-a1-02',
-      title: 'Um etwas bitten',
-      type: 'Goethe A1 Sprechen Teil 2',
-      instruction: 'Practice asking for things politely. Pick a card and form a request.',
-      promptCards: ['Ein Glas Wasser', 'Die Speisekarte', 'Die Rechnung', 'Ein Formular', 'Einen Termin', 'Die Telefonnummer'],
-      sampleResponse: 'Entschuldigung, kann ich bitte ein Glas Wasser haben? / Können Sie mir bitte die Speisekarte geben? / Ich hätte gerne die Rechnung, bitte.',
-      tips: 'Key phrases: Kann ich bitte...? / Können Sie mir...geben? / Ich hätte gerne... / Entschuldigung, wo ist...?',
-    },
-  ],
-  A2: [
-    {
-      id: 's-a2-01',
-      title: 'Über den Alltag sprechen',
-      type: 'Goethe A2 / TELC A2',
-      instruction: 'Describe your daily routine. Use time expressions and separable verbs.',
-      promptCards: ['Morgens', 'Auf der Arbeit', 'Mittagspause', 'Nach der Arbeit', 'Abends', 'Am Wochenende'],
-      sampleResponse: 'Morgens stehe ich um 7 Uhr auf. Dann frühstücke ich und fahre mit der U-Bahn zur Arbeit. Im Büro arbeite ich mit Daten und habe Besprechungen. In der Mittagspause esse ich in der Kantine. Nach der Arbeit gehe ich manchmal ins Fitnessstudio. Abends koche ich und lerne Deutsch.',
-      tips: 'Use time connectors: dann, danach, zuerst, manchmal, oft, immer. Show separable verbs: aufstehen, anfangen, einkaufen. Vary sentence starters for V2 practice.',
-    },
-  ],
-  B1: [
-    {
-      id: 's-b1-01',
-      title: 'Meinung äußern',
-      type: 'Goethe B1 / TELC B1',
-      instruction: 'Express your opinion on: "Should companies require employees to learn the local language?"',
-      promptCards: ['Dafür (For)', 'Dagegen (Against)', 'Persönliche Erfahrung', 'Kompromiss / Lösung'],
-      sampleResponse: 'Meiner Meinung nach ist es wichtig, die Sprache des Landes zu lernen. Einerseits hilft es bei der Integration und man versteht die Kultur besser. Andererseits braucht man Zeit, um eine Sprache zu lernen, und nicht alle können schnell lernen. Ich denke, Unternehmen sollten Sprachkurse anbieten, aber keine Perfektion erwarten. Aus meiner Erfahrung kann ich sagen, dass Deutschlernen mir sehr hilft, mich in Hamburg wohl zu fühlen.',
-      tips: 'Structure: Meiner Meinung nach... / Einerseits...andererseits... / Ich denke, dass... / Aus meiner Erfahrung... Use Konjunktiv II for suggestions: sollten, könnten.',
-    },
-  ],
-};
-
-// ─── LISTENING PRACTICE (simulated with transcripts) ───
-export const LISTENING_EXERCISES = {
-  A1: [
-    {
-      id: 'l-a1-01',
-      title: 'Ansagen verstehen',
-      type: 'Goethe A1 Hören Teil 1',
-      instruction: 'Read the announcement transcript and answer questions (in real exam, you listen).',
-      transcript: 'Achtung, eine Durchsage: Der ICE 790 nach Hamburg Hauptbahnhof fährt heute von Gleis 14 ab. Ich wiederhole: Gleis 14. Abfahrt um 10 Uhr 35. Bitte beachten Sie die Gleisänderung.',
-      questions: [
-        { q: 'Where is the train going?', options: ['Berlin', 'Hamburg Hauptbahnhof', 'München', 'Frankfurt'], answer: 1 },
-        { q: 'What platform?', options: ['4', '10', '14', '35'], answer: 2 },
-        { q: 'What time does it depart?', options: ['10:14', '10:30', '10:35', '14:35'], answer: 2 },
-      ],
-    },
-    {
-      id: 'l-a1-02',
-      title: 'Telefongespräch',
-      type: 'Goethe A1 Hören Teil 2',
-      instruction: 'Read the phone conversation transcript and answer questions.',
-      transcript: 'Praxis Dr. Schmidt, guten Tag.\n— Guten Tag, hier ist Merrill Ejike. Ich möchte bitte einen Termin machen.\n— Natürlich. Wann passt es Ihnen? Am Montag um 10 Uhr oder am Mittwoch um 14 Uhr?\n— Mittwoch um 14 Uhr, bitte.\n— Gut. Bringen Sie bitte Ihre Versichertenkarte mit.\n— Mache ich. Vielen Dank!',
-      questions: [
-        { q: 'Where is Merrill calling?', options: ['A restaurant', 'A doctor\'s office', 'A school', 'A bank'], answer: 1 },
-        { q: 'Which appointment does he choose?', options: ['Monday 10:00', 'Wednesday 14:00', 'Tuesday 10:00', 'Thursday 14:00'], answer: 1 },
-        { q: 'What should he bring?', options: ['His passport', 'Insurance card', 'Money', 'A letter'], answer: 1 },
-      ],
-    },
-  ],
-  A2: [
-    {
-      id: 'l-a2-01',
-      title: 'Radiomeldung',
-      type: 'Goethe A2 Hören',
-      instruction: 'Read the radio announcement transcript and answer questions.',
-      transcript: 'Und jetzt das Wetter für Hamburg und Umgebung: Heute Nachmittag wird es bewölkt mit Temperaturen um 15 Grad. Am Abend ist mit Regen zu rechnen. Morgen früh gibt es Nebel, aber am Nachmittag kommt die Sonne raus. Die Temperaturen steigen auf 18 Grad. Gute Nachrichten fürs Wochenende: Es bleibt trocken und sonnig bei bis zu 22 Grad.',
-      questions: [
-        { q: 'What is today\'s afternoon weather?', options: ['Sunny', 'Cloudy', 'Rainy', 'Foggy'], answer: 1 },
-        { q: 'What is expected tomorrow morning?', options: ['Sun', 'Rain', 'Fog', 'Snow'], answer: 2 },
-        { q: 'What is the weekend forecast?', options: ['Rainy', 'Dry and sunny', 'Cold', 'Stormy'], answer: 1 },
-      ],
-    },
-  ],
-  B1: [
-    {
-      id: 'l-b1-01',
-      title: 'Interview verstehen',
-      type: 'Goethe B1 Hören',
-      instruction: 'Read the interview transcript and answer questions.',
-      transcript: 'Moderator: Herr Müller, Sie arbeiten seit 20 Jahren als Personalchef. Was ist Ihnen bei Bewerbern am wichtigsten?\n\nMüller: Am wichtigsten ist mir die Motivation. Noten und Abschlüsse sind natürlich auch wichtig, aber wenn jemand wirklich begeistert ist von der Stelle, merkt man das sofort.\n\nModerator: Und was sind typische Fehler im Vorstellungsgespräch?\n\nMüller: Viele Bewerber informieren sich nicht über das Unternehmen. Das ist ein großer Fehler. Außerdem sollte man pünktlich sein und angemessene Kleidung tragen.',
-      questions: [
-        { q: 'What does Herr Müller consider most important?', options: ['Grades', 'Experience', 'Motivation', 'Appearance'], answer: 2 },
-        { q: 'What is a typical mistake?', options: ['Arriving early', 'Not researching the company', 'Asking about salary', 'Being too motivated'], answer: 1 },
-        { q: 'What else does he recommend?', options: ['Bring a gift', 'Be punctual and dress appropriately', 'Send a follow-up email', 'Speak only German'], answer: 1 },
       ],
     },
   ],

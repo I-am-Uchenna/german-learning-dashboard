@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import {
   LEVELS, EXAM_CATEGORIES, VOCABULARY, GRAMMAR, READING_EXERCISES,
   WRITING_EXERCISES, SPEAKING_EXERCISES, LISTENING_EXERCISES,
-  DAILY_PHRASES, STUDY_PLAN, PRONUNCIATION
+  DAILY_PHRASES, STUDY_PLAN, PRONUNCIATION, GUIDED_LESSONS, numberToGerman
 } from './data'
 import { LID_QUESTIONS } from './lid_data'
 import './styles.css'
@@ -495,6 +495,183 @@ function LiDTest({ progress, onMark }) {
   )
 }
 
+// ─── NUMBER DRILL COMPONENT ───
+function NumberDrill() {
+  const [range, setRange] = useState([1, 20])
+  const [current, setCurrent] = useState(null)
+  const [input, setInput] = useState('')
+  const [result, setResult] = useState(null)
+  const [score, setScore] = useState({ correct: 0, total: 0 })
+  const [mode, setMode] = useState('type') // type or listen
+
+  const generate = useCallback(() => {
+    const n = Math.floor(Math.random() * (range[1] - range[0] + 1)) + range[0]
+    setCurrent(n)
+    setInput('')
+    setResult(null)
+  }, [range])
+
+  useEffect(() => { generate() }, [range])
+
+  const check = () => {
+    const correct = numberToGerman(current)
+    const isCorrect = input.trim().toLowerCase() === correct.toLowerCase()
+    setResult({ isCorrect, correct })
+    setScore(p => ({ correct: p.correct + (isCorrect ? 1 : 0), total: p.total + 1 }))
+  }
+
+  return (
+    <div className="number-drill fade-up">
+      <div className="drill-range">
+        {[[1,20,'1-20'],[1,100,'1-100'],[1,1000,'1-1000']].map(([min,max,label]) => (
+          <button key={label} className={`pill ${range[0]===min&&range[1]===max?'active':''}`}
+            onClick={() => { setRange([min,max]); setScore({correct:0,total:0}) }}>{label}</button>
+        ))}
+        <span className="card-counter">{score.correct}/{score.total} correct</span>
+      </div>
+
+      {current !== null && (
+        <div className="drill-card">
+          <div className="drill-number">{current}</div>
+          <SpeakBtn text={numberToGerman(current)} rate={0.7} />
+          <input className="drill-input" value={input} onChange={e => setInput(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && check()}
+            placeholder="Type the German word..." autoFocus disabled={result !== null} />
+          {!result ? (
+            <button className="primary-btn" onClick={check} disabled={!input.trim()}>Check</button>
+          ) : (
+            <div className={`score-card ${result.isCorrect ? 'passed' : 'failed'}`}>
+              <span className="score-icon">{result.isCorrect ? '✅' : '❌'}</span>
+              <div>
+                <span>{result.isCorrect ? 'Richtig!' : `${result.correct}`}</span>
+                <button className="secondary-btn" style={{marginLeft:12}} onClick={generate}>Next →</button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─── GUIDED LESSON COMPONENT ───
+function GuidedLessonView({ lesson, onComplete }) {
+  const [step, setStep] = useState(0)
+  const [quizAnswers, setQuizAnswers] = useState({})
+  const [showQuizResults, setShowQuizResults] = useState(false)
+  const current = lesson.steps[step]
+  const isLast = step === lesson.steps.length - 1
+
+  return (
+    <div className="guided-lesson fade-up">
+      <div className="lid-progress-bar">
+        <div className="lid-progress-fill" style={{ width: `${((step + 1) / lesson.steps.length) * 100}%`, background: 'var(--green)' }} />
+      </div>
+      <div className="lid-counter">Step {step + 1} of {lesson.steps.length}</div>
+
+      {current.type === 'info' && (
+        <div className="lesson-info-card">
+          <div style={{ whiteSpace: 'pre-wrap', fontSize: 14, lineHeight: 1.8, color: 'var(--text-2)' }}>{current.content}</div>
+        </div>
+      )}
+
+      {current.type === 'vocab' && (
+        <div className="lesson-vocab-grid">
+          <h4>Learn these words:</h4>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 8, marginTop: 12 }}>
+            {current.wordIds.map(id => {
+              const allVocab = [...(VOCABULARY.A1||[]), ...(VOCABULARY.A2||[]), ...(VOCABULARY.B1||[])]
+              const w = allVocab.find(v => v.id === id)
+              if (!w) return null
+              return (
+                <div key={id} style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 600, fontSize: 14 }}>{w.article ? `${w.article} ` : ''}{w.word}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-3)' }}>{w.meaning}</div>
+                  </div>
+                  <SpeakBtn text={`${w.article || ''} ${w.word}`} rate={0.7} />
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {current.type === 'quiz' && (
+        <div className="lesson-quiz">
+          <h4>Quick Quiz</h4>
+          {current.questions.map((q, i) => (
+            <div key={i} className={`exercise ${showQuizResults ? (quizAnswers[i] === q.ans ? 'correct' : 'incorrect') : ''}`} style={{ marginTop: 12 }}>
+              <p className="exercise-q">{q.q}</p>
+              <div className="exercise-options">
+                {q.opts.map((o, j) => (
+                  <button key={j} className={`opt-btn ${quizAnswers[i]===j?'selected':''} ${showQuizResults&&j===q.ans?'correct-answer':''}`}
+                    onClick={() => !showQuizResults && setQuizAnswers(p => ({...p,[i]:j}))}
+                    disabled={showQuizResults}>{o}</button>
+                ))}
+              </div>
+            </div>
+          ))}
+          {!showQuizResults && (
+            <button className="primary-btn" onClick={() => setShowQuizResults(true)}
+              disabled={Object.keys(quizAnswers).length < current.questions.length}>Check Answers</button>
+          )}
+          {showQuizResults && (
+            <div className="score-card passed" style={{marginTop:12}}>
+              <span className="score-icon">🎉</span>
+              <span>{current.questions.filter((q,i) => quizAnswers[i]===q.ans).length}/{current.questions.length} correct</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {current.type === 'drill' && <NumberDrill />}
+
+      <div className="lid-nav" style={{ marginTop: 20 }}>
+        <button className="fc-btn" onClick={() => { setStep(Math.max(0, step-1)); setShowQuizResults(false); setQuizAnswers({}) }} disabled={step === 0}>← Back</button>
+        {!isLast ? (
+          <button className="fc-btn" onClick={() => { setStep(step+1); setShowQuizResults(false); setQuizAnswers({}) }}>Next →</button>
+        ) : (
+          <button className="primary-btn" onClick={() => onComplete(lesson.id)}>✅ Complete Lesson</button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── DAILY PRACTICE COMPONENT ───
+function DailyPractice({ level, vocabProgress, markVocab }) {
+  const [done, setDone] = useState({ vocab: false, grammar: false })
+  const vocab = VOCABULARY[level] || []
+  const unknownVocab = vocab.filter(w => !vocabProgress?.[w.id])
+  const todaysWords = useMemo(() => unknownVocab.sort(() => Math.random() - 0.5).slice(0, 10), [level])
+
+  return (
+    <div className="daily-practice fade-up">
+      <div className="lid-info-card" style={{ background: 'rgba(72,187,120,0.06)', borderColor: 'rgba(72,187,120,0.2)' }}>
+        <h4 style={{ color: 'var(--green)' }}>🎯 Today's Goal</h4>
+        <p>Learn <strong>10 new words</strong> + review <strong>1 grammar topic</strong>. Small daily practice beats marathon sessions.</p>
+      </div>
+
+      <div className="card" style={{ marginTop: 16 }}>
+        <h3>📝 Today's 10 Words ({level})</h3>
+        <p className="card-desc">{todaysWords.length} words to learn. Tap 🔊 to hear, tap row to mark known.</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 12 }}>
+          {todaysWords.map(w => (
+            <div key={w.id} className={`vocab-row ${vocabProgress?.[w.id] ? 'known' : ''}`} onClick={() => markVocab(w.id)}>
+              <div className="vocab-word">{w.article && <span className="vocab-article">{w.article}</span>}{w.word}</div>
+              <div className="vocab-meaning">{w.meaning}</div>
+              <span className="vocab-theme">{w.theme}</span>
+              <SpeakBtn text={`${w.article || ''} ${w.word}`} rate={0.75} />
+            </div>
+          ))}
+        </div>
+        {todaysWords.length === 0 && <p style={{ color: 'var(--green)', marginTop: 12 }}>🎉 You know all {level} vocabulary! Move to the next level.</p>}
+      </div>
+    </div>
+  )
+}
+
 // ─── MAIN APP ───
 export default function App() {
   const [page, setPage] = useState('dashboard')
@@ -503,6 +680,8 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [mounted, setMounted] = useState(false)
   const [grammarIdx, setGrammarIdx] = useState(0)
+  const [selectedLesson, setSelectedLesson] = useState(null)
+  const [vocabThemeFilter, setVocabThemeFilter] = useState('all')
 
   useEffect(() => { setTimeout(() => setMounted(true), 50) }, [])
   useEffect(() => { saveProgress(progress) }, [progress])
@@ -540,7 +719,10 @@ export default function App() {
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: '◉' },
+    { id: 'daily', label: 'Daily Practice', icon: '🎯' },
+    { id: 'lessons', label: 'Lessons', icon: '📚' },
     { id: 'alphabet', label: 'Alphabet', icon: '🔤' },
+    { id: 'numbers', label: 'Numbers', icon: '🔢' },
     { id: 'vocabulary', label: 'Wortschatz', icon: '📝' },
     { id: 'grammar', label: 'Grammatik', icon: '📐' },
     { id: 'reading', label: 'Lesen', icon: '📖' },
@@ -703,6 +885,86 @@ export default function App() {
             </div>
           )}
 
+          {/* ════ DAILY PRACTICE ════ */}
+          {page === 'daily' && (
+            <div className="fade-up">
+              <div className="section-header">
+                <div>
+                  <h2>🎯 Daily Practice</h2>
+                  <p className="section-desc">10 words + focused review. Small daily effort = big results.</p>
+                </div>
+              </div>
+              <DailyPractice level={level} vocabProgress={progress.vocab} markVocab={markVocab} />
+            </div>
+          )}
+
+          {/* ════ GUIDED LESSONS ════ */}
+          {page === 'lessons' && (
+            <div className="fade-up">
+              <div className="section-header">
+                <div>
+                  <h2>📚 Guided Lessons</h2>
+                  <p className="section-desc">Step-by-step learning path — start from Lesson 1 and progress naturally</p>
+                </div>
+              </div>
+              {!selectedLesson ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {GUIDED_LESSONS.map((lesson, i) => {
+                    const completed = progress.lessons?.[lesson.id]
+                    const locked = i > 0 && !progress.lessons?.[GUIDED_LESSONS[i-1].id]
+                    return (
+                      <div key={lesson.id}
+                        className={`vocab-row ${completed ? 'known' : ''}`}
+                        style={{ opacity: locked ? 0.4 : 1, cursor: locked ? 'default' : 'pointer' }}
+                        onClick={() => !locked && setSelectedLesson(lesson)}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
+                          <span style={{
+                            width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            background: completed ? 'var(--green-dim)' : locked ? 'rgba(255,255,255,0.03)' : 'var(--accent-dim)',
+                            color: completed ? 'var(--green)' : locked ? 'var(--text-3)' : 'var(--accent)',
+                            fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 600, flexShrink: 0,
+                          }}>{completed ? '✓' : locked ? '🔒' : i + 1}</span>
+                          <div>
+                            <div style={{ fontWeight: 600, fontSize: 14 }}>{lesson.title}</div>
+                            <div style={{ fontSize: 12, color: 'var(--text-3)' }}>{lesson.desc}</div>
+                          </div>
+                        </div>
+                        <StatusBadge status={completed ? 'completed' : locked ? 'not-started' : 'in-progress'} />
+                      </div>
+                    )
+                  })}
+                </div>
+              ) : (
+                <div>
+                  <button className="secondary-btn" onClick={() => setSelectedLesson(null)} style={{ marginBottom: 16 }}>← Back to all lessons</button>
+                  <h3 style={{ fontFamily: 'var(--font-display)', marginBottom: 4 }}>{selectedLesson.title}</h3>
+                  <p className="section-desc" style={{ marginBottom: 16 }}>{selectedLesson.desc}</p>
+                  <GuidedLessonView lesson={selectedLesson} onComplete={(id) => {
+                    setProgress(p => ({ ...p, lessons: { ...p.lessons, [id]: true } }))
+                    setSelectedLesson(null)
+                  }} />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ════ NUMBERS DRILL ════ */}
+          {page === 'numbers' && (
+            <div className="fade-up">
+              <div className="section-header">
+                <div>
+                  <h2>🔢 Zahlen — Number Drill</h2>
+                  <p className="section-desc">Practice typing German numbers. Essential for prices, addresses, phone numbers, and time.</p>
+                </div>
+              </div>
+              <div className="lid-info-card" style={{ background: 'rgba(232,168,56,0.06)', borderColor: 'rgba(232,168,56,0.2)', marginBottom: 20 }}>
+                <h4 style={{ color: 'var(--accent)' }}>How German numbers work</h4>
+                <p>German reverses two-digit numbers: <strong>25 = fünfundzwanzig</strong> (five-and-twenty). Think of it as "ones-und-tens". Above 100, it's straightforward: <strong>342 = dreihundertzweiundvierzig</strong>.</p>
+              </div>
+              <NumberDrill />
+            </div>
+          )}
+
           {/* ════ ALPHABET & PRONUNCIATION ════ */}
           {page === 'alphabet' && (
             <div className="fade-up">
@@ -784,12 +1046,15 @@ export default function App() {
           )}
 
           {/* ════ VOCABULARY ════ */}
-          {page === 'vocabulary' && (
+          {page === 'vocabulary' && (() => {
+            const themes = [...new Set(vocabForLevel.map(w => w.theme))]
+            const filteredVocab = vocabThemeFilter === 'all' ? vocabForLevel : vocabForLevel.filter(w => w.theme === vocabThemeFilter)
+            return (
             <div className="fade-up">
               <div className="section-header">
                 <div>
                   <h2>Wortschatz — {level}</h2>
-                  <p className="section-desc">{vocabForLevel.length} words · Tap card to reveal meaning</p>
+                  <p className="section-desc">{vocabForLevel.length} words · {knownVocab} known · Tap card to reveal</p>
                 </div>
                 <div className="section-stats">
                   <ProgressRing progress={vocabForLevel.length ? Math.round((knownVocab/vocabForLevel.length)*100) : 0} size={64} stroke={5} color="#E8A838">
@@ -797,13 +1062,24 @@ export default function App() {
                   </ProgressRing>
                 </div>
               </div>
-              <FlashcardDeck words={vocabForLevel} progress={progress.vocab || {}} onMark={markVocab} />
+
+              {/* Theme filter */}
+              <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 20 }}>
+                <button className={`pill ${vocabThemeFilter==='all'?'active':''}`} onClick={() => setVocabThemeFilter('all')}>All ({vocabForLevel.length})</button>
+                {themes.map(t => (
+                  <button key={t} className={`pill ${vocabThemeFilter===t?'active':''}`} onClick={() => setVocabThemeFilter(t)}>
+                    {t} ({vocabForLevel.filter(w => w.theme === t).length})
+                  </button>
+                ))}
+              </div>
+
+              <FlashcardDeck words={filteredVocab} progress={progress.vocab || {}} onMark={markVocab} />
 
               {/* Vocabulary table */}
               <div className="vocab-table-section">
-                <h3>All {level} Vocabulary</h3>
+                <h3>{vocabThemeFilter === 'all' ? `All ${level}` : vocabThemeFilter} Vocabulary</h3>
                 <div className="vocab-grid">
-                  {vocabForLevel.map(w => (
+                  {filteredVocab.map(w => (
                     <div key={w.id} className={`vocab-row ${progress.vocab?.[w.id] ? 'known' : ''}`} onClick={() => markVocab(w.id)}>
                       <div className="vocab-word">
                         {w.article && <span className="vocab-article">{w.article}</span>}
@@ -811,15 +1087,14 @@ export default function App() {
                       </div>
                       <div className="vocab-meaning">{w.meaning}</div>
                       <span className="vocab-theme">{w.theme}</span>
-                      <span className={`vocab-check ${progress.vocab?.[w.id] ? 'checked' : ''}`}>
-                        {progress.vocab?.[w.id] ? '✓' : '○'}
-                      </span>
+                      <SpeakBtn text={`${w.article || ''} ${w.word}`} rate={0.75} />
                     </div>
                   ))}
                 </div>
               </div>
             </div>
-          )}
+            )
+          })()}
 
           {/* ════ GRAMMAR ════ */}
           {page === 'grammar' && (
