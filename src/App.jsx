@@ -961,14 +961,16 @@ export default function App() {
   const [page, setPage] = useState('dashboard')
   const [level, setLevel] = useState('A1')
   const [progress, setProgress] = useState(() => loadProgress())
-  const [sidebarOpen, setSidebarOpen] = useState(true)
   const [mounted, setMounted] = useState(false)
   const [grammarIdx, setGrammarIdx] = useState(0)
   const [selectedLesson, setSelectedLesson] = useState(null)
   const [vocabThemeFilter, setVocabThemeFilter] = useState('all')
+  const [theme, setTheme] = useState(() => localStorage.getItem('dl-theme') || 'light')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => { setTimeout(() => setMounted(true), 50) }, [])
   useEffect(() => { saveProgress(progress) }, [progress])
+  useEffect(() => { document.documentElement.setAttribute('data-theme', theme); localStorage.setItem('dl-theme', theme) }, [theme])
 
   const markVocab = useCallback((id) => {
     setProgress(p => {
@@ -1066,45 +1068,43 @@ export default function App() {
 
   return (
     <div className={`app ${mounted ? 'mounted' : ''}`}>
+      {/* MOBILE OVERLAY */}
+      <div className={`sidebar-overlay ${mobileMenuOpen ? 'visible' : ''}`} onClick={() => setMobileMenuOpen(false)} />
+
       {/* SIDEBAR */}
-      <aside className={`sidebar ${sidebarOpen ? '' : 'collapsed'}`}>
+      <aside className={`sidebar ${mobileMenuOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <div className="logo">
             <span className="logo-flag">🇩🇪</span>
-            {sidebarOpen && <span className="logo-text">Deutsch Lernen</span>}
+            <span className="logo-text">Deutsch Lernen</span>
           </div>
-          <button className="sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
-            {sidebarOpen ? '◂' : '▸'}
-          </button>
+          <button className="sidebar-close" onClick={() => setMobileMenuOpen(false)}>✕</button>
         </div>
 
-        {sidebarOpen && (
-          <div className="sidebar-level">
-            <LevelSelector current={level} onChange={setLevel} />
-          </div>
-        )}
+        <div className="sidebar-level">
+          <LevelSelector current={level} onChange={setLevel} />
+        </div>
 
         <nav className="sidebar-nav">
           {navGroups.map((group, gi) => (
             <div key={gi}>
-              {group.label && sidebarOpen && (
+              {group.label && (
                 <div className="nav-group-label">{group.label}</div>
               )}
               {group.items.map(item => (
                 <button key={item.id}
                   className={`nav-item ${page === item.id ? 'active' : ''}`}
-                  onClick={() => setPage(item.id)}
+                  onClick={() => { setPage(item.id); setMobileMenuOpen(false) }}
                   title={item.label}>
                   <span className="nav-icon">{item.icon}</span>
-                  {sidebarOpen && <span className="nav-label">{item.label}</span>}
+                  <span className="nav-label">{item.label}</span>
                 </button>
               ))}
             </div>
           ))}
         </nav>
 
-        {sidebarOpen && (
-          <div className="sidebar-footer">
+        <div className="sidebar-footer">
             {streakData.count > 0 && (
               <div className="streak-badge">🔥 {streakData.count} day streak</div>
             )}
@@ -1117,21 +1117,24 @@ export default function App() {
                 window.location.reload()
               }
             }}>Reset Progress</button>
-          </div>
-        )}
+        </div>
       </aside>
 
       {/* MAIN CONTENT */}
       <main className="main-content">
         <header className="top-bar">
           <div className="top-bar-left">
+            <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(true)}>☰</button>
             <h1 className="page-title">
               {navItems.find(n => n.id === page)?.icon} {navItems.find(n => n.id === page)?.label}
             </h1>
             <span className="level-badge">{level}</span>
           </div>
-          <div className="top-bar-right">
+          <div className="top-bar-actions">
             <LevelSelector current={level} onChange={setLevel} />
+            <button className="theme-toggle" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')} title="Toggle theme">
+              {theme === 'dark' ? '☀️' : '🌙'}
+            </button>
           </div>
         </header>
 
