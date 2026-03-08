@@ -54,6 +54,206 @@ function SpeakBtn({ text, rate, className = '' }) {
   )
 }
 
+// ─── SPEECH RECOGNITION (Pronunciation Check) ───
+function useSpeechRecognition() {
+  const [result, setResult] = useState(null)
+  const [listening, setListening] = useState(false)
+  const [available, setAvailable] = useState(false)
+  const recognitionRef = useRef(null)
+
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (SpeechRecognition) {
+      setAvailable(true)
+      const recognition = new SpeechRecognition()
+      recognition.lang = 'de-DE'
+      recognition.interimResults = false
+      recognition.maxAlternatives = 3
+      recognition.onresult = (event) => {
+        const results = Array.from(event.results[0]).map(r => ({
+          text: r.transcript.toLowerCase().trim(),
+          confidence: r.confidence,
+        }))
+        setResult(results)
+        setListening(false)
+      }
+      recognition.onerror = () => setListening(false)
+      recognition.onend = () => setListening(false)
+      recognitionRef.current = recognition
+    }
+  }, [])
+
+  const listen = useCallback(() => {
+    if (recognitionRef.current && !listening) {
+      setResult(null)
+      setListening(true)
+      recognitionRef.current.start()
+    }
+  }, [listening])
+
+  const stop = useCallback(() => {
+    if (recognitionRef.current) { recognitionRef.current.stop(); setListening(false) }
+  }, [])
+
+  return { listen, stop, listening, result, available }
+}
+
+function PronunciationCheck({ targetText }) {
+  const { listen, stop, listening, result, available } = useSpeechRecognition()
+  if (!available) return null
+
+  const target = targetText.toLowerCase().trim()
+  const match = result ? result.some(r => {
+    const spoken = r.text.replace(/[.,!?]/g, '')
+    return spoken === target.replace(/[.,!?]/g, '') || spoken.includes(target.replace(/[.,!?]/g, ''))
+  }) : null
+  const bestResult = result ? result[0] : null
+
+  return (
+    <div className="pronunciation-check">
+      <button className={`speak-btn ${listening ? 'active' : ''}`}
+        onClick={(e) => { e.stopPropagation(); listening ? stop() : listen() }}
+        title="Record your pronunciation"
+        style={{ background: listening ? 'rgba(232,93,93,0.15)' : undefined, borderColor: listening ? 'var(--red)' : undefined }}>
+        {listening ? '⏹' : '🎙️'}
+      </button>
+      {result && (
+        <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: match ? 'var(--green)' : 'var(--red)', marginLeft: 8 }}>
+          {match ? '✓ Great!' : `✗ "${bestResult?.text}" — try again`}
+        </span>
+      )}
+      {listening && <span style={{ fontSize: 11, color: 'var(--text-3)', marginLeft: 8 }}>Listening...</span>}
+    </div>
+  )
+}
+
+// ─── SRS (Spaced Repetition System) ───
+const SRS_KEY = 'deutsch-lernen-srs'
+function loadSRS() { try { return JSON.parse(localStorage.getItem(SRS_KEY)) || {} } catch { return {} } }
+function saveSRS(data) { localStorage.setItem(SRS_KEY, JSON.stringify(data)) }
+
+function getSRSCard(srs, id) {
+  return srs[id] || { interval: 0, ease: 2.5, nextReview: 0, reps: 0 }
+}
+
+function updateSRS(srs, id, quality) {
+  // SM-2 algorithm simplified
+  // quality: 0 = wrong, 1 = hard, 2 = good, 3 = easy
+  const card = getSRSCard(srs, id)
+  let { interval, ease, reps } = card
+  const now = Date.now()
+
+  if (quality < 1) {
+    // Reset on fail
+    interval = 0
+    reps = 0
+  } else {
+    if (reps === 0) interval = 1 // 1 day
+    else if (reps === 1) interval = 3 // 3 days
+    else interval = Math.round(interval * ease)
+    reps += 1
+    ease = Math.max(1.3, ease + (0.1 - (3 - quality) * (0.08 + (3 - quality) * 0.02)))
+  }
+
+  return {
+    ...srs,
+    [id]: {
+      interval,
+      ease: Math.round(ease * 100) / 100,
+      nextReview: now + interval * 24 * 60 * 60 * 1000,
+      reps,
+      lastReview: now,
+    }
+  }
+}
+
+function getDueCards(srs, allIds) {
+  const now = Date.now()
+  return allIds.filter(id => {
+    const card = srs[id]
+    if (!card) return true // New card = due
+    return card.nextReview <= now
+  })
+}
+
+// ─── SRS REVIEW COMPONENT ───
+function SRSReview({ words, level }) {
+  const [srs, setSrs] = useState(() => loadSRS())
+  const [currentIdx, setCurrentIdx] = useState(0)
+  const [flipped, setFlipped] = useState(false)
+  const [sessionDone, setSessionDone] = useState(false)
+
+  const dueIds = useMemo(() => getDueCards(srs, words.map(w => w.id)), [srs, words])
+  const dueWords = useMemo(() => words.filter(w => dueIds.includes(w.id)).slice(0, 20), [dueIds, words])
+
+  const current = dueWords[currentIdx]
+
+  const rate = (quality) => {
+    const newSrs = updateSRS(srs, current.id, quality)
+    setSrs(newSrs)
+    saveSRS(newSrs)
+
+    if (currentIdx < dueWords.length - 1) {
+      setCurrentIdx(currentIdx + 1)
+      setFlipped(false)
+    } else {
+      setSessionDone(true)
+    }
+  }
+
+  if (!dueWords.length || sessionDone) {
+    const reviewed = Object.keys(srs).length
+    return (
+      <div className="card" style={{ textAlign: 'center', padding: 40 }}>
+        <span style={{ fontSize: 48 }}>🎉</span>
+        <h3 style={{ fontFamily: 'var(--font-display)', marginTop: 12 }}>
+          {sessionDone ? 'Session Complete!' : 'All caught up!'}
+        </h3>
+        <p style={{ color: 'var(--text-3)', marginTop: 8 }}>
+          {sessionDone ? `Reviewed ${dueWords.length} cards. Come back later for more.` : `${reviewed} words in your SRS. No reviews due right now.`}
+        </p>
+        {sessionDone && <button className="primary-btn" onClick={() => { setSessionDone(false); setCurrentIdx(0) }} style={{ marginTop: 16 }}>Review Again</button>}
+      </div>
+    )
+  }
+
+  return (
+    <div className="srs-review">
+      <div className="lid-progress-bar"><div className="lid-progress-fill" style={{ width: `${((currentIdx + 1) / dueWords.length) * 100}%`, background: 'var(--green)' }} /></div>
+      <div className="lid-counter">{currentIdx + 1} / {dueWords.length} due · {Object.keys(srs).length} total in SRS</div>
+
+      <div className={`flashcard ${flipped ? 'flipped' : ''}`} onClick={() => setFlipped(!flipped)}>
+        <div className="flashcard-inner">
+          <div className="flashcard-front">
+            <span className="card-theme">{current.theme}</span>
+            <span className="card-word">{current.article ? `${current.article} ` : ''}{current.word}</span>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <SpeakBtn text={`${current.article || ''} ${current.word}`} rate={0.7} />
+              <PronunciationCheck targetText={current.word} />
+            </div>
+            <span className="card-hint">tap to reveal · 🎙️ to test pronunciation</span>
+          </div>
+          <div className="flashcard-back">
+            <span className="card-meaning">{current.meaning}</span>
+            <span className="card-example">"{current.example}"</span>
+            <SpeakBtn text={current.example} rate={0.75} />
+            <span className="card-hint">Rate your recall:</span>
+          </div>
+        </div>
+      </div>
+
+      {flipped && (
+        <div className="srs-buttons">
+          <button className="srs-btn srs-again" onClick={() => rate(0)}>❌ Again</button>
+          <button className="srs-btn srs-hard" onClick={() => rate(1)}>😐 Hard</button>
+          <button className="srs-btn srs-good" onClick={() => rate(2)}>👍 Good</button>
+          <button className="srs-btn srs-easy" onClick={() => rate(3)}>⚡ Easy</button>
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ─── UTILITY ───
 const LS_KEY = 'deutsch-lernen-progress'
 const loadProgress = () => {
@@ -241,7 +441,9 @@ function GrammarLesson({ lesson, progress, onComplete }) {
 function ReadingExercise({ exercise, progress, onComplete }) {
   const [answers, setAnswers] = useState({})
   const [showResults, setShowResults] = useState(false)
-  const score = exercise.questions.filter((q, i) => answers[i] === q.answer).length
+  const getAns = (q) => q.answer !== undefined ? q.answer : q.ans
+  const getOpts = (q) => q.options || q.opts || []
+  const score = exercise.questions.filter((q, i) => answers[i] === getAns(q)).length
   const total = exercise.questions.length
   const passed = score >= Math.ceil(total * 0.7)
 
@@ -256,16 +458,17 @@ function ReadingExercise({ exercise, progress, onComplete }) {
         {progress[exercise.id] && <StatusBadge status="completed" />}
       </div>
       <h3>{exercise.title}</h3>
-      <p className="instruction">{exercise.instruction}</p>
+      {exercise.instruction && <p className="instruction">{exercise.instruction}</p>}
       <div className="reading-text">{exercise.text || exercise.transcript}</div>
+      <SpeakBtn text={exercise.text || exercise.transcript} rate={0.75} />
       <div className="questions-section">
         {exercise.questions.map((q, i) => (
-          <div key={i} className={`question ${showResults ? (answers[i] === q.answer ? 'correct' : 'incorrect') : ''}`}>
+          <div key={i} className={`question ${showResults ? (answers[i] === getAns(q) ? 'correct' : 'incorrect') : ''}`}>
             <p className="q-text">{i + 1}. {q.q}</p>
             <div className="q-options">
-              {q.options.map((opt, j) => (
+              {getOpts(q).map((opt, j) => (
                 <button key={j}
-                  className={`opt-btn ${answers[i] === j ? 'selected' : ''} ${showResults && j === q.answer ? 'correct-answer' : ''}`}
+                  className={`opt-btn ${answers[i] === j ? 'selected' : ''} ${showResults && j === getAns(q) ? 'correct-answer' : ''}`}
                   onClick={() => !showResults && setAnswers(p => ({ ...p, [i]: j }))}
                   disabled={showResults}
                 >{opt}</button>
@@ -323,10 +526,10 @@ function WritingExercise({ exercise }) {
         </>
       )}
 
-      {showSample && exercise.sampleAnswer && (
+      {showSample && (exercise.sampleAnswer || exercise.sample) && (
         <div className="sample-answer">
           <h4>Sample Answer</h4>
-          <div className="sample-text">{exercise.sampleAnswer}</div>
+          <div className="sample-text">{exercise.sampleAnswer || exercise.sample}</div>
         </div>
       )}
       <div className="tips-box">
@@ -341,6 +544,8 @@ function WritingExercise({ exercise }) {
 function SpeakingExercise({ exercise }) {
   const [showSample, setShowSample] = useState(false)
   const [activeCard, setActiveCard] = useState(null)
+  const cards = exercise.promptCards || exercise.cards || []
+  const sampleText = exercise.sampleResponse || exercise.sample || ''
 
   return (
     <div className="speaking-exercise fade-up">
@@ -349,7 +554,7 @@ function SpeakingExercise({ exercise }) {
       <p className="instruction">{exercise.instruction}</p>
 
       <div className="prompt-cards">
-        {exercise.promptCards.map((card, i) => (
+        {cards.map((card, i) => (
           <button key={i} className={`prompt-card ${activeCard === i ? 'active' : ''}`}
             onClick={() => setActiveCard(activeCard === i ? null : i)}>
             {card}
@@ -363,10 +568,11 @@ function SpeakingExercise({ exercise }) {
         </button>
       </div>
 
-      {showSample && (
+      {showSample && sampleText && (
         <div className="sample-answer">
           <h4>Sample Response</h4>
-          <div className="sample-text">{exercise.sampleResponse}</div>
+          <div className="sample-text">{sampleText}</div>
+          <SpeakBtn text={sampleText} rate={0.75} />
         </div>
       )}
       <div className="tips-box">
@@ -720,6 +926,7 @@ export default function App() {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: '◉' },
     { id: 'daily', label: 'Daily Practice', icon: '🎯' },
+    { id: 'srs', label: 'SRS Review', icon: '🧠' },
     { id: 'lessons', label: 'Lessons', icon: '📚' },
     { id: 'alphabet', label: 'Alphabet', icon: '🔤' },
     { id: 'numbers', label: 'Numbers', icon: '🔢' },
@@ -815,7 +1022,7 @@ export default function App() {
                   { label: 'Vocabulary', value: `${knownVocab}/${vocabForLevel.length}`, pct: vocabForLevel.length ? Math.round((knownVocab/vocabForLevel.length)*100) : 0, color: '#E8A838', page: 'vocabulary' },
                   { label: 'Grammar', value: `${completedGrammar}/${grammarForLevel.length}`, pct: grammarForLevel.length ? Math.round((completedGrammar/grammarForLevel.length)*100) : 0, color: '#FC8181', page: 'grammar' },
                   { label: 'Exercises', value: `${completedExercises}/${allExercises.length}`, pct: allExercises.length ? Math.round((completedExercises/allExercises.length)*100) : 0, color: '#63B3ED', page: 'reading' },
-                  { label: 'Exam Skills', value: '6 areas', pct: null, color: '#48BB78', page: 'plan' },
+                  { label: 'Einbürgerung', value: `${lidCompleted}/${LID_QUESTIONS.length}`, pct: LID_QUESTIONS.length ? Math.round((lidCompleted/LID_QUESTIONS.length)*100) : 0, color: '#9F7AEA', page: 'lid' },
                 ].map((s, i) => (
                   <div key={i} className="stat-card" style={{ animationDelay: `${i * 0.08}s` }} onClick={() => setPage(s.page)}>
                     <div className="stat-label">{s.label}</div>
@@ -895,6 +1102,23 @@ export default function App() {
                 </div>
               </div>
               <DailyPractice level={level} vocabProgress={progress.vocab} markVocab={markVocab} />
+            </div>
+          )}
+
+          {/* ════ SRS REVIEW ════ */}
+          {page === 'srs' && (
+            <div className="fade-up">
+              <div className="section-header">
+                <div>
+                  <h2>🧠 Spaced Repetition Review</h2>
+                  <p className="section-desc">Anki-style review — words you struggle with appear more often. Rate each card to optimize your learning.</p>
+                </div>
+              </div>
+              <div className="lid-info-card" style={{ background: 'rgba(72,187,120,0.06)', borderColor: 'rgba(72,187,120,0.2)', marginBottom: 20 }}>
+                <h4 style={{ color: 'var(--green)' }}>How SRS works</h4>
+                <p>Flip each card, then rate your recall. <strong>Again</strong> = review immediately. <strong>Hard</strong> = review in 1 day. <strong>Good</strong> = review in 3+ days. <strong>Easy</strong> = review in 7+ days. The system automatically schedules reviews at the optimal time for your memory.</p>
+              </div>
+              <SRSReview words={vocabForLevel} level={level} />
             </div>
           )}
 

@@ -515,6 +515,27 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
 /* ─── DAILY PRACTICE ─── */
 .daily-practice { }
 
+/* ─── SRS REVIEW ─── */
+.srs-review { }
+.srs-buttons { display: flex; gap: 8px; justify-content: center; margin-top: 16px; }
+.srs-btn {
+  padding: 12px 20px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; border: 1px solid var(--border);
+  font-family: var(--font-body); flex: 1; max-width: 120px; text-align: center;
+}
+.srs-btn:hover { transform: translateY(-2px); }
+.srs-again { background: rgba(232,93,93,0.1); border-color: rgba(232,93,93,0.3); color: var(--red); }
+.srs-again:hover { background: rgba(232,93,93,0.2); }
+.srs-hard { background: rgba(237,137,54,0.1); border-color: rgba(237,137,54,0.3); color: #ED8936; }
+.srs-hard:hover { background: rgba(237,137,54,0.2); }
+.srs-good { background: rgba(72,187,120,0.1); border-color: rgba(72,187,120,0.3); color: var(--green); }
+.srs-good:hover { background: rgba(72,187,120,0.2); }
+.srs-easy { background: rgba(99,179,237,0.1); border-color: rgba(99,179,237,0.3); color: var(--blue); }
+.srs-easy:hover { background: rgba(99,179,237,0.2); }
+
+/* ─── PRONUNCIATION CHECK ─── */
+.pronunciation-check { display: flex; align-items: center; gap: 4px; }
+
 /* ─── SPEAK BUTTON ─── */
 .speak-btn {
   background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 50%;
