@@ -492,6 +492,84 @@ function ReadingExercise({ exercise, progress, onComplete }) {
   )
 }
 
+// ─── LISTENING EXERCISE (listen-first, transcript hidden) ───
+function ListeningExercise({ exercise, progress, onComplete }) {
+  const { speak, speaking, available } = useVoice()
+  const [showTranscript, setShowTranscript] = useState(false)
+  const [answers, setAnswers] = useState({})
+  const [showResults, setShowResults] = useState(false)
+  const [hasListened, setHasListened] = useState(false)
+
+  const getAns = (q) => q.answer !== undefined ? q.answer : q.ans
+  const getOpts = (q) => q.options || q.opts || []
+  const text = exercise.text || exercise.transcript || ''
+  const score = exercise.questions.filter((q, i) => answers[i] === getAns(q)).length
+  const total = exercise.questions.length
+  const passed = score >= Math.ceil(total * 0.7)
+
+  useEffect(() => {
+    if (showResults && passed && !progress[exercise.id]) onComplete(exercise.id)
+  }, [showResults, passed])
+
+  const playAudio = () => {
+    speak(text, 0.8)
+    setHasListened(true)
+  }
+
+  return (
+    <div className="reading-exercise fade-up">
+      <div className="exercise-meta">
+        <span className="exercise-type">{exercise.type}</span>
+        {progress[exercise.id] && <StatusBadge status="completed" />}
+      </div>
+      <h3>🎧 {exercise.title}</h3>
+
+      {/* Listen button - primary action */}
+      <div style={{ display: 'flex', gap: 12, alignItems: 'center', margin: '16px 0', padding: 20, background: 'rgba(159,122,234,0.06)', borderRadius: 'var(--radius-sm)', border: '1px solid rgba(159,122,234,0.15)' }}>
+        <button className="primary-btn" onClick={playAudio} style={{ background: speaking ? 'var(--red)' : '#9F7AEA' }}>
+          {speaking ? '⏸ Playing...' : '▶ Listen'}
+        </button>
+        <span style={{ fontSize: 13, color: 'var(--text-3)' }}>
+          {hasListened ? 'Listen again or answer the questions below' : 'Listen to the audio first, then answer questions'}
+        </span>
+      </div>
+
+      {/* Transcript toggle */}
+      <button className="secondary-btn" onClick={() => setShowTranscript(!showTranscript)} style={{ marginBottom: 16 }}>
+        {showTranscript ? '👁️ Hide Transcript' : '📄 Show Transcript'}
+      </button>
+      {showTranscript && <div className="reading-text">{text}</div>}
+
+      {/* Questions */}
+      <div className="questions-section">
+        {exercise.questions.map((q, i) => (
+          <div key={i} className={`question ${showResults ? (answers[i] === getAns(q) ? 'correct' : 'incorrect') : ''}`}>
+            <p className="q-text">{i + 1}. {q.q}</p>
+            <div className="q-options">
+              {getOpts(q).map((opt, j) => (
+                <button key={j}
+                  className={`opt-btn ${answers[i] === j ? 'selected' : ''} ${showResults && j === getAns(q) ? 'correct-answer' : ''}`}
+                  onClick={() => !showResults && setAnswers(p => ({ ...p, [i]: j }))}
+                  disabled={showResults}
+                >{opt}</button>
+              ))}
+            </div>
+          </div>
+        ))}
+        {!showResults ? (
+          <button className="primary-btn" onClick={() => setShowResults(true)} disabled={Object.keys(answers).length < total}>Check Answers</button>
+        ) : (
+          <div className={`score-card ${passed ? 'passed' : 'failed'}`}>
+            <span className="score-icon">{passed ? '✅' : '📖'}</span>
+            <span>{score}/{total} — {passed ? 'Gut gemacht!' : 'Listen again and retry!'}</span>
+            {!passed && <button className="secondary-btn" onClick={() => { setAnswers({}); setShowResults(false) }} style={{marginLeft:8}}>Retry</button>}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ─── WRITING EXERCISE COMPONENT ───
 function WritingExercise({ exercise }) {
   const [text, setText] = useState('')
@@ -923,23 +1001,68 @@ export default function App() {
   const completedExercises = allExercises.filter(e => progress.exercises?.[e.id]).length
   const lidCompleted = Object.keys(progress.lid || {}).length
 
-  const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: '◉' },
-    { id: 'daily', label: 'Daily Practice', icon: '🎯' },
-    { id: 'srs', label: 'SRS Review', icon: '🧠' },
-    { id: 'lessons', label: 'Lessons', icon: '📚' },
-    { id: 'alphabet', label: 'Alphabet', icon: '🔤' },
-    { id: 'numbers', label: 'Numbers', icon: '🔢' },
-    { id: 'vocabulary', label: 'Wortschatz', icon: '📝' },
-    { id: 'grammar', label: 'Grammatik', icon: '📐' },
-    { id: 'reading', label: 'Lesen', icon: '📖' },
-    { id: 'listening', label: 'Hören', icon: '👂' },
-    { id: 'writing', label: 'Schreiben', icon: '✍️' },
-    { id: 'speaking', label: 'Sprechen', icon: '🗣️' },
-    { id: 'lid', label: 'Einbürgerung', icon: '🏛️' },
-    { id: 'phrases', label: 'Alltag', icon: '💬' },
-    { id: 'plan', label: 'Study Plan', icon: '📅' },
+  const navGroups = [
+    { label: null, items: [
+      { id: 'dashboard', label: 'Dashboard', icon: '◉' },
+    ]},
+    { label: 'LEARN', items: [
+      { id: 'daily', label: 'Daily Practice', icon: '🎯' },
+      { id: 'srs', label: 'SRS Review', icon: '🧠' },
+      { id: 'lessons', label: 'Lessons', icon: '📚' },
+      { id: 'alphabet', label: 'Alphabet', icon: '🔤' },
+      { id: 'numbers', label: 'Zahlen', icon: '🔢' },
+    ]},
+    { label: 'PRACTICE', items: [
+      { id: 'vocabulary', label: 'Wortschatz', icon: '📝' },
+      { id: 'grammar', label: 'Grammatik', icon: '📐' },
+    ]},
+    { label: 'EXAM PREP', items: [
+      { id: 'reading', label: 'Lesen', icon: '📖' },
+      { id: 'listening', label: 'Hören', icon: '👂' },
+      { id: 'writing', label: 'Schreiben', icon: '✍️' },
+      { id: 'speaking', label: 'Sprechen', icon: '🗣️' },
+      { id: 'lid', label: 'Einbürgerung', icon: '🏛️' },
+    ]},
+    { label: 'REFERENCE', items: [
+      { id: 'phrases', label: 'Alltag', icon: '💬' },
+      { id: 'plan', label: 'Study Plan', icon: '📅' },
+    ]},
   ]
+  const navItems = navGroups.flatMap(g => g.items)
+
+  // Streak calculation
+  const today = new Date().toISOString().slice(0, 10)
+  const streakData = progress.streak || { lastDate: null, count: 0 }
+
+  const recordActivity = useCallback(() => {
+    setProgress(p => {
+      const today = new Date().toISOString().slice(0, 10)
+      const s = p.streak || { lastDate: null, count: 0 }
+      if (s.lastDate === today) return p
+      const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10)
+      const newCount = s.lastDate === yesterday ? s.count + 1 : 1
+      return { ...p, streak: { lastDate: today, count: newCount } }
+    })
+  }, [])
+
+  // Record activity on any learning action
+  useEffect(() => {
+    const total = Object.keys(progress.vocab || {}).length + Object.keys(progress.grammar || {}).length + Object.keys(progress.exercises || {}).length
+    if (total > 0) recordActivity()
+  }, [progress.vocab, progress.grammar, progress.exercises])
+
+  // Smart CTA for dashboard
+  const getSmartCTA = () => {
+    const srsData = loadSRS()
+    const dueCount = getDueCards(srsData, vocabForLevel.map(w => w.id)).length
+    const lessonsCompleted = Object.keys(progress.lessons || {}).length
+    const nextLesson = GUIDED_LESSONS[lessonsCompleted]
+    
+    if (lessonsCompleted === 0) return { text: '🚀 Start Here — Lesson 1: Hallo!', page: 'lessons' }
+    if (dueCount > 5) return { text: `🧠 ${dueCount} SRS cards due — Review now`, page: 'srs' }
+    if (nextLesson) return { text: `📚 Continue: ${nextLesson.title}`, page: 'lessons' }
+    return { text: '🎯 Daily Practice', page: 'daily' }
+  }
 
   return (
     <div className={`app ${mounted ? 'mounted' : ''}`}>
@@ -962,21 +1085,38 @@ export default function App() {
         )}
 
         <nav className="sidebar-nav">
-          {navItems.map(item => (
-            <button key={item.id}
-              className={`nav-item ${page === item.id ? 'active' : ''}`}
-              onClick={() => setPage(item.id)}
-              title={item.label}>
-              <span className="nav-icon">{item.icon}</span>
-              {sidebarOpen && <span className="nav-label">{item.label}</span>}
-            </button>
+          {navGroups.map((group, gi) => (
+            <div key={gi}>
+              {group.label && sidebarOpen && (
+                <div className="nav-group-label">{group.label}</div>
+              )}
+              {group.items.map(item => (
+                <button key={item.id}
+                  className={`nav-item ${page === item.id ? 'active' : ''}`}
+                  onClick={() => setPage(item.id)}
+                  title={item.label}>
+                  <span className="nav-icon">{item.icon}</span>
+                  {sidebarOpen && <span className="nav-label">{item.label}</span>}
+                </button>
+              ))}
+            </div>
           ))}
         </nav>
 
         {sidebarOpen && (
           <div className="sidebar-footer">
-            <div className="sidebar-meta">Hamburg Prep</div>
-            <div className="sidebar-meta">Goethe · TELC</div>
+            {streakData.count > 0 && (
+              <div className="streak-badge">🔥 {streakData.count} day streak</div>
+            )}
+            <div className="sidebar-meta">Hamburg Prep · Goethe · TELC</div>
+            <button className="reset-btn" onClick={() => {
+              if (window.confirm('Reset ALL progress? This cannot be undone.')) {
+                localStorage.removeItem(LS_KEY)
+                localStorage.removeItem(SRS_KEY)
+                setProgress({})
+                window.location.reload()
+              }
+            }}>Reset Progress</button>
           </div>
         )}
       </aside>
@@ -1001,10 +1141,10 @@ export default function App() {
             <div className="dashboard fade-up">
               <div className="welcome-card">
                 <div className="welcome-text">
-                  <h2>Willkommen, Merrill! 👋</h2>
+                  <h2>Willkommen, Merrill! {streakData.count > 0 ? `🔥 ${streakData.count} day streak` : '👋'}</h2>
                   <p>Your journey from A1 to B1 — preparing for Goethe & TELC exams and life in Hamburg.</p>
-                  <button className="primary-btn" style={{ marginTop: 12 }} onClick={() => setPage('alphabet')}>
-                    🚀 Start Here — Learn the Alphabet
+                  <button className="primary-btn" style={{ marginTop: 12 }} onClick={() => setPage(getSmartCTA().page)}>
+                    {getSmartCTA().text}
                   </button>
                 </div>
                 <div className="welcome-level">
@@ -1366,13 +1506,13 @@ export default function App() {
               <div className="section-header">
                 <div>
                   <h2>Hören — {level}</h2>
-                  <p className="section-desc">Listening comprehension with transcripts (practice reading speed for real exam prep)</p>
+                  <p className="section-desc">Listen first, then answer. Tap 🔊 to hear the text read aloud before reading the transcript.</p>
                 </div>
               </div>
               {(LISTENING_EXERCISES[level] || []).map(ex => (
-                <ReadingExercise key={ex.id} exercise={ex} progress={progress.exercises || {}} onComplete={markExercise} />
+                <ListeningExercise key={ex.id} exercise={ex} progress={progress.exercises || {}} onComplete={markExercise} />
               ))}
-              {!(LISTENING_EXERCISES[level] || []).length && <div className="empty-state"><p>More listening exercises coming soon for {level}!</p></div>}
+              {!(LISTENING_EXERCISES[level] || []).length && <div className="empty-state"><p>More listening exercises coming for {level}!</p></div>}
             </div>
           )}
 

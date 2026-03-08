@@ -98,6 +98,24 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
 .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
 .sidebar-meta { font-size: 11px; color: var(--text-3); font-family: var(--font-mono); letter-spacing: 0.5px; }
 
+.nav-group-label {
+  font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-3);
+  font-family: var(--font-mono); font-weight: 600; padding: 12px 12px 4px; margin-top: 4px;
+}
+
+.streak-badge {
+  font-size: 13px; font-weight: 600; color: #ED8936; margin-bottom: 8px;
+  padding: 6px 12px; background: rgba(237,137,54,0.08); border-radius: var(--radius-sm);
+  border: 1px solid rgba(237,137,54,0.15); text-align: center;
+}
+
+.reset-btn {
+  background: none; border: none; color: var(--text-3); cursor: pointer; font-size: 10px;
+  font-family: var(--font-mono); padding: 4px 0; margin-top: 8px; opacity: 0.5;
+  transition: all 0.2s;
+}
+.reset-btn:hover { color: var(--red); opacity: 1; }
+
 /* ─── MAIN CONTENT ─── */
 .main-content {
   flex: 1; margin-left: var(--sidebar-w); min-height: 100vh;
