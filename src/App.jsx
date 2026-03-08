@@ -1,10 +1,58 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import {
   LEVELS, EXAM_CATEGORIES, VOCABULARY, GRAMMAR, READING_EXERCISES,
   WRITING_EXERCISES, SPEAKING_EXERCISES, LISTENING_EXERCISES,
   DAILY_PHRASES, STUDY_PLAN
 } from './data'
+import { LID_QUESTIONS } from './lid_data'
 import './styles.css'
+
+// ─── VOICE / TTS SYSTEM ───
+function useVoice() {
+  const [speaking, setSpeaking] = useState(false)
+  const [voices, setVoices] = useState([])
+  const synth = typeof window !== 'undefined' ? window.speechSynthesis : null
+
+  useEffect(() => {
+    if (!synth) return
+    const loadVoices = () => {
+      const v = synth.getVoices().filter(v => v.lang.startsWith('de'))
+      setVoices(v)
+    }
+    loadVoices()
+    synth.onvoiceschanged = loadVoices
+  }, [])
+
+  const speak = useCallback((text, rate = 0.85) => {
+    if (!synth) return
+    synth.cancel()
+    const utt = new SpeechSynthesisUtterance(text)
+    utt.lang = 'de-DE'
+    utt.rate = rate
+    if (voices.length) utt.voice = voices[0]
+    utt.onstart = () => setSpeaking(true)
+    utt.onend = () => setSpeaking(false)
+    utt.onerror = () => setSpeaking(false)
+    synth.speak(utt)
+  }, [synth, voices])
+
+  const stop = useCallback(() => { if (synth) { synth.cancel(); setSpeaking(false) } }, [synth])
+
+  return { speak, stop, speaking, available: !!synth && voices.length > 0 }
+}
+
+// ─── SPEAK BUTTON COMPONENT ───
+function SpeakBtn({ text, rate, className = '' }) {
+  const { speak, speaking, available } = useVoice()
+  if (!available) return null
+  return (
+    <button className={`speak-btn ${speaking ? 'active' : ''} ${className}`}
+      onClick={(e) => { e.stopPropagation(); speak(text, rate || 0.85) }}
+      title="Listen to pronunciation">
+      {speaking ? '⏸' : '🔊'}
+    </button>
+  )
+}
 
 // ─── UTILITY ───
 const LS_KEY = 'deutsch-lernen-progress'
@@ -95,12 +143,14 @@ function FlashcardDeck({ words, progress, onMark }) {
           <div className="flashcard-front">
             <span className="card-theme">{current.theme}</span>
             <span className="card-word">{current.article ? `${current.article} ` : ''}{current.word}</span>
-            <span className="card-hint">tap to reveal</span>
+            <SpeakBtn text={`${current.article || ''} ${current.word}`} />
+            <span className="card-hint">tap to reveal · 🔊 to hear</span>
           </div>
           <div className="flashcard-back">
             <span className="card-meaning">{current.meaning}</span>
             <span className="card-example">"{current.example}"</span>
-            <span className="card-hint">tap to flip back</span>
+            <SpeakBtn text={current.example} rate={0.75} />
+            <span className="card-hint">tap to flip · 🔊 to hear example</span>
           </div>
         </div>
       </div>
@@ -327,6 +377,124 @@ function SpeakingExercise({ exercise }) {
   )
 }
 
+// ─── LEBEN IN DEUTSCHLAND TEST COMPONENT ───
+function LiDTest({ progress, onMark }) {
+  const [mode, setMode] = useState('practice') // practice, exam
+  const [currentQ, setCurrentQ] = useState(0)
+  const [answers, setAnswers] = useState({})
+  const [showResult, setShowResult] = useState(false)
+  const [examQuestions, setExamQuestions] = useState([])
+  const [shuffledOpts, setShuffledOpts] = useState({})
+
+  // Generate shuffled options for each question
+  const getShuffled = useCallback((q, idx) => {
+    if (shuffledOpts[idx]) return shuffledOpts[idx]
+    const indices = q.opts.map((_, i) => i)
+    // Fisher-Yates shuffle
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[indices[i], indices[j]] = [indices[j], indices[i]]
+    }
+    const shuffled = { indices, correctIdx: indices.indexOf(q.ans) }
+    setShuffledOpts(prev => ({ ...prev, [idx]: shuffled }))
+    return shuffled
+  }, [shuffledOpts])
+
+  const startExam = () => {
+    // 33 random questions like real exam
+    const shuffled = [...LID_QUESTIONS].sort(() => Math.random() - 0.5).slice(0, 33)
+    setExamQuestions(shuffled)
+    setAnswers({})
+    setShowResult(false)
+    setCurrentQ(0)
+    setShuffledOpts({})
+    setMode('exam')
+  }
+
+  const questions = mode === 'exam' ? examQuestions : LID_QUESTIONS
+  const q = questions[currentQ]
+  if (!q) return <div className="empty-state"><p>Loading questions...</p></div>
+
+  const shuffled = getShuffled(q, currentQ)
+  const examScore = mode === 'exam' && showResult
+    ? questions.filter((qq, i) => {
+        const s = getShuffled(qq, i)
+        return answers[i] === s.correctIdx
+      }).length
+    : 0
+
+  return (
+    <div className="lid-section fade-up">
+      <div className="lid-mode-toggle">
+        <button className={`pill ${mode === 'practice' ? 'active' : ''}`}
+          onClick={() => { setMode('practice'); setCurrentQ(0); setAnswers({}); setShowResult(false); setShuffledOpts({}) }}>
+          Practice (All {LID_QUESTIONS.length})
+        </button>
+        <button className={`pill ${mode === 'exam' ? 'active' : ''}`} onClick={startExam}>
+          🎯 Mock Exam (33 Fragen)
+        </button>
+      </div>
+
+      {mode === 'exam' && showResult ? (
+        <div className={`score-card ${examScore >= 17 ? 'passed' : 'failed'}`} style={{ marginBottom: 20 }}>
+          <span className="score-icon">{examScore >= 17 ? '🎉' : '📚'}</span>
+          <div>
+            <div className="score-text">{examScore}/33 — {examScore >= 17 ? 'BESTANDEN! (Passed!)' : 'Nicht bestanden. 17 needed.'}</div>
+            <button className="secondary-btn" style={{ marginTop: 8 }} onClick={startExam}>Try Again</button>
+          </div>
+        </div>
+      ) : null}
+
+      <div className="lid-progress-bar">
+        <div className="lid-progress-fill" style={{ width: `${((currentQ + 1) / questions.length) * 100}%` }} />
+      </div>
+      <div className="lid-counter">
+        Frage {currentQ + 1} von {questions.length}
+        {mode === 'exam' && <span> · {Object.keys(answers).length} beantwortet</span>}
+      </div>
+
+      <div className="lid-question-card">
+        <div className="lid-q-num">Aufgabe {q.num}</div>
+        <div className="lid-q-text">{q.q}</div>
+        <SpeakBtn text={q.q} rate={0.8} />
+
+        <div className="lid-options">
+          {shuffled.indices.map((origIdx, displayIdx) => {
+            const isSelected = answers[currentQ] === displayIdx
+            const isCorrect = displayIdx === shuffled.correctIdx
+            const showFeedback = answers[currentQ] !== undefined
+
+            return (
+              <button key={displayIdx}
+                className={`lid-opt ${isSelected ? 'selected' : ''} ${showFeedback && isCorrect ? 'correct' : ''} ${showFeedback && isSelected && !isCorrect ? 'wrong' : ''}`}
+                onClick={() => {
+                  if (answers[currentQ] !== undefined) return
+                  setAnswers(prev => ({ ...prev, [currentQ]: displayIdx }))
+                  if (displayIdx === shuffled.correctIdx && q.num) {
+                    onMark(q.num)
+                  }
+                }}
+                disabled={answers[currentQ] !== undefined}
+              >
+                <span className="lid-opt-letter">{'ABCD'[displayIdx]}</span>
+                <span className="lid-opt-text">{q.opts[origIdx]}</span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      <div className="lid-nav">
+        <button className="fc-btn" onClick={() => setCurrentQ(Math.max(0, currentQ - 1))} disabled={currentQ === 0}>← Prev</button>
+        <button className="fc-btn" onClick={() => setCurrentQ(Math.min(questions.length - 1, currentQ + 1))} disabled={currentQ >= questions.length - 1}>Next →</button>
+        {mode === 'exam' && Object.keys(answers).length === questions.length && !showResult && (
+          <button className="primary-btn" onClick={() => setShowResult(true)}>Ergebnis anzeigen</button>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ─── MAIN APP ───
 export default function App() {
   const [page, setPage] = useState('dashboard')
@@ -354,6 +522,10 @@ export default function App() {
     setProgress(p => ({ ...p, exercises: { ...p.exercises, [id]: true } }))
   }, [])
 
+  const markLiD = useCallback((num) => {
+    setProgress(p => ({ ...p, lid: { ...p.lid, [num]: true } }))
+  }, [])
+
   // Stats
   const vocabForLevel = VOCABULARY[level] || []
   const knownVocab = vocabForLevel.filter(w => progress.vocab?.[w.id]).length
@@ -364,6 +536,7 @@ export default function App() {
     ...(LISTENING_EXERCISES[level] || []),
   ]
   const completedExercises = allExercises.filter(e => progress.exercises?.[e.id]).length
+  const lidCompleted = Object.keys(progress.lid || {}).length
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: '◉' },
@@ -373,6 +546,7 @@ export default function App() {
     { id: 'listening', label: 'Hören', icon: '👂' },
     { id: 'writing', label: 'Schreiben', icon: '✍️' },
     { id: 'speaking', label: 'Sprechen', icon: '🗣️' },
+    { id: 'lid', label: 'Einbürgerung', icon: '🏛️' },
     { id: 'phrases', label: 'Alltag', icon: '💬' },
     { id: 'plan', label: 'Study Plan', icon: '📅' },
   ]
@@ -649,6 +823,27 @@ export default function App() {
             </div>
           )}
 
+          {/* ════ LEBEN IN DEUTSCHLAND ════ */}
+          {page === 'lid' && (
+            <div className="fade-up">
+              <div className="section-header">
+                <div>
+                  <h2>Leben in Deutschland / Einbürgerungstest</h2>
+                  <p className="section-desc">{LID_QUESTIONS.length} official BAMF questions · 33-question mock exam · {lidCompleted} answered correctly</p>
+                </div>
+                <ProgressRing progress={LID_QUESTIONS.length ? Math.round((lidCompleted / LID_QUESTIONS.length) * 100) : 0} size={64} stroke={5} color="#9F7AEA">
+                  <span className="mini-pct">{lidCompleted}</span>
+                </ProgressRing>
+              </div>
+              <div className="lid-info-card">
+                <h4>About the Test</h4>
+                <p>The Leben in Deutschland test has <strong>33 questions</strong> from a pool of 300+ questions. You need <strong>17 correct</strong> to pass. 
+                Topics: democracy, history, rights, values, and daily life in Germany. Required for permanent residence and citizenship.</p>
+              </div>
+              <LiDTest progress={progress.lid || {}} onMark={markLiD} />
+            </div>
+          )}
+
           {/* ════ DAILY PHRASES ════ */}
           {page === 'phrases' && (
             <div className="fade-up">
@@ -664,8 +859,11 @@ export default function App() {
                   <div className="phrase-cards">
                     {phrases.map((p, i) => (
                       <div key={i} className="phrase-card">
-                        <div className="phrase-de-big">{p.de}</div>
-                        <div className="phrase-en-small">{p.en}</div>
+                        <div style={{ flex: 1 }}>
+                          <div className="phrase-de-big">{p.de}</div>
+                          <div className="phrase-en-small">{p.en}</div>
+                        </div>
+                        <SpeakBtn text={p.de} rate={0.8} />
                       </div>
                     ))}
                   </div>
