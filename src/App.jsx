@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import {
   LEVELS, EXAM_CATEGORIES, VOCABULARY, GRAMMAR, READING_EXERCISES,
   WRITING_EXERCISES, SPEAKING_EXERCISES, LISTENING_EXERCISES,
-  DAILY_PHRASES, STUDY_PLAN
+  DAILY_PHRASES, STUDY_PLAN, PRONUNCIATION
 } from './data'
 import { LID_QUESTIONS } from './lid_data'
 import './styles.css'
@@ -540,8 +540,9 @@ export default function App() {
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: '◉' },
+    { id: 'alphabet', label: 'Alphabet', icon: '🔤' },
     { id: 'vocabulary', label: 'Wortschatz', icon: '📝' },
-    { id: 'grammar', label: 'Grammatik', icon: '🔤' },
+    { id: 'grammar', label: 'Grammatik', icon: '📐' },
     { id: 'reading', label: 'Lesen', icon: '📖' },
     { id: 'listening', label: 'Hören', icon: '👂' },
     { id: 'writing', label: 'Schreiben', icon: '✍️' },
@@ -613,6 +614,9 @@ export default function App() {
                 <div className="welcome-text">
                   <h2>Willkommen, Merrill! 👋</h2>
                   <p>Your journey from A1 to B1 — preparing for Goethe & TELC exams and life in Hamburg.</p>
+                  <button className="primary-btn" style={{ marginTop: 12 }} onClick={() => setPage('alphabet')}>
+                    🚀 Start Here — Learn the Alphabet
+                  </button>
                 </div>
                 <div className="welcome-level">
                   <ProgressRing progress={Math.round(((knownVocab + completedGrammar + completedExercises) / Math.max(1, vocabForLevel.length + grammarForLevel.length + allExercises.length)) * 100)} size={100} color="#E8A838">
@@ -695,6 +699,86 @@ export default function App() {
                   ))}
                 </div>
                 <button className="link-btn" onClick={() => setPage('phrases')}>See all phrases →</button>
+              </div>
+            </div>
+          )}
+
+          {/* ════ ALPHABET & PRONUNCIATION ════ */}
+          {page === 'alphabet' && (
+            <div className="fade-up">
+              <div className="section-header">
+                <div>
+                  <h2>Das Alphabet & Aussprache</h2>
+                  <p className="section-desc">Start here — learn German sounds, special characters, and pronunciation rules. Tap 🔊 to hear each sound.</p>
+                </div>
+              </div>
+
+              <div className="card" style={{ marginBottom: 20 }}>
+                <h3>🔤 German Alphabet</h3>
+                <p className="card-desc">26 letters + 4 special characters. Tap any letter to hear it.</p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 8 }}>
+                  {PRONUNCIATION.alphabet.map((a, i) => (
+                    <div key={i} style={{
+                      background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)',
+                      padding: '12px', display: 'flex', alignItems: 'center', gap: 10,
+                      transition: 'all 0.2s', cursor: 'pointer',
+                    }}>
+                      <span style={{ fontFamily: 'var(--font-display)', fontSize: 22, minWidth: 40 }}>{a.letter.split(' ')[0]}</span>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: 12, color: 'var(--text-2)' }}>{a.sound}</div>
+                        <div style={{ fontSize: 11, color: 'var(--text-3)', fontFamily: 'var(--font-mono)' }}>{a.example}</div>
+                      </div>
+                      <SpeakBtn text={a.letter.split(' ')[0]} rate={0.6} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="card" style={{ marginBottom: 20, borderLeft: '3px solid var(--accent)' }}>
+                <h3>✨ Special Characters (Umlaute & Eszett)</h3>
+                <p className="card-desc">These don't exist in English — they're essential for German pronunciation.</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16 }}>
+                  {PRONUNCIATION.special.map((s, i) => (
+                    <div key={i} style={{
+                      background: 'var(--accent-dim)', border: '1px solid rgba(232,168,56,0.15)',
+                      borderRadius: 'var(--radius-sm)', padding: '16px 20px', display: 'flex', alignItems: 'flex-start', gap: 14,
+                    }}>
+                      <span style={{ fontFamily: 'var(--font-display)', fontSize: 32, minWidth: 50, color: 'var(--accent)' }}>{s.letter.split(' ')[0]}</span>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>Sounds like: {s.sound}</div>
+                        <div style={{ fontSize: 13, color: 'var(--text-2)', marginBottom: 4 }}>Examples: {s.example}</div>
+                        <div style={{ fontSize: 12, color: 'var(--accent)', fontStyle: 'italic' }}>💡 {s.tip}</div>
+                      </div>
+                      <SpeakBtn text={s.example.split(',')[0]} rate={0.6} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="card">
+                <h3>📏 Key Pronunciation Rules</h3>
+                <p className="card-desc">Master these and you'll sound 80% more natural</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 16 }}>
+                  {PRONUNCIATION.rules.map((r, i) => (
+                    <div key={i} style={{
+                      background: 'var(--card)', border: '1px solid var(--border)',
+                      borderRadius: 'var(--radius-sm)', padding: '14px 18px',
+                      display: 'flex', alignItems: 'flex-start', gap: 12,
+                    }}>
+                      <span style={{
+                        width: 28, height: 28, borderRadius: '50%', background: 'var(--accent-dim)',
+                        color: 'var(--accent)', fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 600,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                      }}>{i + 1}</span>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 3 }}>{r.rule}</div>
+                        <div style={{ fontSize: 13, color: 'var(--text-2)' }}>{r.example}</div>
+                        <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 2 }}>{r.note}</div>
+                      </div>
+                      <SpeakBtn text={r.example.split('=')[0].trim().split(',')[0]} rate={0.6} />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           )}
