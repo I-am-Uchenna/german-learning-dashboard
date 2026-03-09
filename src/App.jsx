@@ -956,6 +956,219 @@ function DailyPractice({ level, vocabProgress, markVocab }) {
   )
 }
 
+// ─── AI TUTOR COMPONENT ───
+const AI_TOPICS = [
+  { id: 'vocab', label: '📝 Vocabulary', desc: 'Generate words for any topic', prompts: ['At the restaurant', 'At the doctor', 'Job interview', 'Apartment hunting', 'At the supermarket', 'Small talk with colleagues', 'Hamburg tourism', 'German bureaucracy'] },
+  { id: 'dialogue', label: '💬 Dialogue', desc: 'Practice real conversations', prompts: ['Ordering coffee', 'Calling the doctor', 'Meeting a neighbor', 'At the Bürgeramt', 'Job interview', 'Asking for directions', 'Shopping for clothes', 'Complaining about a product'] },
+  { id: 'grammar', label: '📐 Grammar Help', desc: 'Explain any grammar topic', prompts: ['Explain der/die/das', 'When to use Akkusativ vs Dativ', 'How Perfekt works', 'Separable verbs explained', 'Word order rules', 'Konjunktiv II for politeness', 'Relative clauses', 'Passive voice'] },
+  { id: 'translate', label: '🔄 Translate', desc: 'Translate anything with explanations', prompts: ['I need to register at the city hall', 'Can you help me find my gate?', 'I would like to open a bank account', 'My heating is broken', 'When does the meeting start?'] },
+  { id: 'correct', label: '✅ Correct My German', desc: 'Paste your German text for feedback', prompts: [] },
+];
+
+function AITutor({ level }) {
+  const [selectedTopic, setSelectedTopic] = useState(null)
+  const [customPrompt, setCustomPrompt] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [result, setResult] = useState(null)
+  const [error, setError] = useState(null)
+  const [history, setHistory] = useState([])
+
+  const generateContent = async (prompt) => {
+    setLoading(true)
+    setError(null)
+    setResult(null)
+
+    const systemPrompts = {
+      vocab: `You are a German language teacher. Generate exactly 10 vocabulary words for the topic "${prompt}" at CEFR level ${level}. For each word provide:
+- The German word with article (der/die/das) if it's a noun
+- English meaning
+- An example sentence in German
+- The example sentence translated to English
+
+Format as a clean list. Use simple language appropriate for ${level} level. Include a mix of nouns, verbs, and adjectives related to the topic.`,
+      
+      dialogue: `You are a German language teacher. Create a realistic dialogue in German about "${prompt}" appropriate for CEFR level ${level}. The dialogue should:
+- Be 8-12 lines long
+- Use vocabulary and grammar appropriate for ${level}
+- Include a translation of each line in English (in parentheses after each German line)
+- End with 3 key phrases to remember from the dialogue
+
+Make it natural and practical for someone living in Hamburg, Germany.`,
+      
+      grammar: `You are a German language teacher. Explain the grammar topic "${prompt}" for a student at CEFR level ${level}. Include:
+- Clear explanation in English with German examples
+- The key rules (numbered)
+- 5 example sentences with translations
+- 3 common mistakes to avoid
+- A quick practice: 3 fill-in-the-blank exercises with answers
+
+Keep it clear, practical, and not too academic.`,
+      
+      translate: `You are a German language teacher. Translate this to German at CEFR level ${level}: "${prompt}"
+
+Provide:
+1. The German translation
+2. A word-by-word breakdown
+3. Key vocabulary from the translation (with articles for nouns)
+4. Grammar notes (what grammar rules are used)
+5. Alternative ways to say the same thing (formal and informal)`,
+      
+      correct: `You are a German language teacher. Correct the following German text and explain any errors. The student is at CEFR level ${level}.
+
+Text to correct: "${prompt}"
+
+Provide:
+1. The corrected version
+2. List each error with: the mistake → the correction → why it's wrong
+3. Overall feedback and encouragement
+4. One tip to improve`,
+    }
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1500,
+          messages: [{ role: 'user', content: systemPrompts[selectedTopic.id] || prompt }],
+        }),
+      })
+
+      if (!response.ok) {
+        const err = await response.json()
+        throw new Error(err.error?.message || 'API request failed')
+      }
+
+      const data = await response.json()
+      const text = data.content?.map(c => c.text || '').join('\n') || 'No response'
+      setResult(text)
+      setHistory(prev => [{ topic: selectedTopic.label, prompt, result: text, time: new Date().toLocaleTimeString() }, ...prev.slice(0, 19)])
+    } catch (err) {
+      setError(err.message || 'Something went wrong. Try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="ai-tutor fade-up">
+      {/* Topic selector */}
+      {!selectedTopic ? (
+        <div>
+          <div className="lid-info-card" style={{ background: 'var(--accent-dim)', borderColor: 'var(--accent)' }}>
+            <h4 style={{ color: 'var(--accent)' }}>🤖 AI-Powered German Tutor</h4>
+            <p>Generate unlimited vocabulary, dialogues, grammar explanations, and translations — personalized to your level ({level}) and interests. Powered by Claude.</p>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 10, marginTop: 16 }}>
+            {AI_TOPICS.map(topic => (
+              <button key={topic.id} onClick={() => setSelectedTopic(topic)} style={{
+                background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 'var(--r)',
+                padding: '18px 16px', cursor: 'pointer', textAlign: 'left', transition: 'all 0.15s',
+                display: 'flex', flexDirection: 'column', gap: 6, boxShadow: 'var(--shadow)',
+              }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent)'}
+                onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border)'}
+              >
+                <span style={{ fontSize: 16, fontWeight: 600, color: 'var(--text)' }}>{topic.label}</span>
+                <span style={{ fontSize: 12, color: 'var(--text-3)' }}>{topic.desc}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* History */}
+          {history.length > 0 && (
+            <div style={{ marginTop: 24 }}>
+              <h3 style={{ fontFamily: 'var(--fd)', fontSize: 15, marginBottom: 10 }}>Recent Generations</h3>
+              {history.slice(0, 5).map((h, i) => (
+                <div key={i} style={{
+                  background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 'var(--rs)',
+                  padding: '10px 14px', marginBottom: 6, cursor: 'pointer',
+                }} onClick={() => { setResult(h.result); setSelectedTopic(AI_TOPICS.find(t => t.label === h.topic) || AI_TOPICS[0]) }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                    <span style={{ fontWeight: 600, color: 'var(--text)' }}>{h.topic}</span>
+                    <span style={{ color: 'var(--text-3)', fontFamily: 'var(--fm)' }}>{h.time}</span>
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 2 }}>{h.prompt.slice(0, 60)}{h.prompt.length > 60 ? '...' : ''}</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div>
+          <button className="secondary-btn" onClick={() => { setSelectedTopic(null); setResult(null); setError(null); setCustomPrompt('') }} style={{ marginBottom: 14 }}>
+            ← Back to topics
+          </button>
+
+          <h3 style={{ fontFamily: 'var(--fd)', fontSize: 18, marginBottom: 4 }}>{selectedTopic.label}</h3>
+          <p style={{ fontSize: 13, color: 'var(--text-3)', marginBottom: 16 }}>{selectedTopic.desc} · Level: {level}</p>
+
+          {/* Quick prompts */}
+          {selectedTopic.prompts.length > 0 && (
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ fontSize: 11, color: 'var(--text-3)', fontFamily: 'var(--fm)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 1 }}>Quick topics</div>
+              <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+                {selectedTopic.prompts.map((p, i) => (
+                  <button key={i} className="pill" onClick={() => { setCustomPrompt(p); generateContent(p) }}
+                    style={{ cursor: 'pointer' }}>{p}</button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Custom input */}
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+            <input
+              value={customPrompt} onChange={e => setCustomPrompt(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && customPrompt.trim() && generateContent(customPrompt)}
+              placeholder={selectedTopic.id === 'correct' ? 'Paste your German text here...' : `Type a topic or sentence...`}
+              style={{
+                flex: 1, background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--rs)',
+                padding: '10px 14px', fontSize: 14, color: 'var(--text)', outline: 'none', fontFamily: 'var(--fb)',
+              }}
+            />
+            <button className="primary-btn" onClick={() => generateContent(customPrompt)} disabled={!customPrompt.trim() || loading}>
+              {loading ? '...' : 'Generate'}
+            </button>
+          </div>
+
+          {/* Loading */}
+          {loading && (
+            <div style={{ textAlign: 'center', padding: 40 }}>
+              <div style={{ fontSize: 32, animation: 'pulse 1.5s ease infinite' }}>🤖</div>
+              <p style={{ color: 'var(--text-3)', marginTop: 8, fontSize: 13 }}>Generating {level} content...</p>
+            </div>
+          )}
+
+          {/* Error */}
+          {error && (
+            <div style={{ background: 'var(--red-dim)', border: '1px solid var(--red)', borderRadius: 'var(--rs)', padding: 14, marginBottom: 14 }}>
+              <p style={{ fontSize: 13, color: 'var(--red)' }}>⚠️ {error}</p>
+              <p style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 4 }}>This feature requires the Claude API. If you're seeing auth errors, the API may not be available in this context.</p>
+            </div>
+          )}
+
+          {/* Result */}
+          {result && (
+            <div className="ai-result" style={{
+              background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 'var(--r)',
+              padding: 22, boxShadow: 'var(--shadow)', whiteSpace: 'pre-wrap', fontSize: 14,
+              lineHeight: 1.8, color: 'var(--text-2)',
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                <span style={{ fontSize: 11, color: 'var(--accent)', fontFamily: 'var(--fm)', textTransform: 'uppercase', letterSpacing: 1 }}>AI Generated · {level}</span>
+                <SpeakBtn text={result.slice(0, 500)} rate={0.8} />
+              </div>
+              {result}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ─── MAIN APP ───
 export default function App() {
   const [page, setPage] = useState('dashboard')
@@ -1006,6 +1219,9 @@ export default function App() {
   const navGroups = [
     { label: null, items: [
       { id: 'dashboard', label: 'Dashboard', icon: '◉' },
+    ]},
+    { label: 'AI TUTOR', items: [
+      { id: 'ai', label: 'AI Tutor', icon: '🤖' },
     ]},
     { label: 'LEARN', items: [
       { id: 'daily', label: 'Daily Practice', icon: '🎯' },
@@ -1232,6 +1448,19 @@ export default function App() {
                 </div>
                 <button className="link-btn" onClick={() => setPage('phrases')}>See all phrases →</button>
               </div>
+            </div>
+          )}
+
+          {/* ════ AI TUTOR ════ */}
+          {page === 'ai' && (
+            <div className="fade-up">
+              <div className="section-header">
+                <div>
+                  <h2>🤖 AI German Tutor</h2>
+                  <p className="section-desc">Generate unlimited vocabulary, dialogues, grammar help, and translations — powered by Claude AI, personalized to your {level} level.</p>
+                </div>
+              </div>
+              <AITutor level={level} />
             </div>
           )}
 
