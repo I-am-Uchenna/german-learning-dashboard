@@ -1025,23 +1025,17 @@ Provide:
     }
 
     try {
-      const GEMINI_KEY = 'AIzaSyAzfZCopJvCyZ8hDWaUvX_IpaWDsvzk1K4'
       const systemPrompt = systemPrompts[selectedTopic.id] || prompt
       
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: systemPrompt }] }],
-            generationConfig: {
-              temperature: 0.7,
-              maxOutputTokens: 2000,
-            },
-          }),
-        }
-      )
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 2000,
+          messages: [{ role: 'user', content: systemPrompt }],
+        }),
+      })
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}))
@@ -1049,7 +1043,7 @@ Provide:
       }
 
       const data = await response.json()
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response generated. Try again.'
+      const text = data.content?.map(c => c.text || '').join('\n') || 'No response generated.'
       setResult(text)
       setHistory(prev => [{ topic: selectedTopic.label, prompt, result: text, time: new Date().toLocaleTimeString() }, ...prev.slice(0, 19)])
     } catch (err) {
@@ -1066,7 +1060,7 @@ Provide:
         <div>
           <div className="lid-info-card" style={{ background: 'var(--accent-dim)', borderColor: 'var(--accent)' }}>
             <h4 style={{ color: 'var(--accent)' }}>🤖 AI-Powered German Tutor</h4>
-            <p>Generate unlimited vocabulary, dialogues, grammar explanations, and translations — personalized to your level ({level}) and interests. Powered by Google Gemini AI.</p>
+            <p>Generate unlimited vocabulary, dialogues, grammar explanations, and translations — personalized to your level ({level}) and interests. Powered by Claude AI.</p>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 10, marginTop: 16 }}>
             {AI_TOPICS.map(topic => (
@@ -1153,7 +1147,7 @@ Provide:
           {error && (
             <div style={{ background: 'var(--red-dim)', border: '1px solid var(--red)', borderRadius: 'var(--rs)', padding: 14, marginBottom: 14 }}>
               <p style={{ fontSize: 13, color: 'var(--red)' }}>⚠️ {error}</p>
-              <p style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 4 }}>Check your internet connection and try again. The AI features use Google Gemini.</p>
+              <p style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 4 }}>The AI tutor works when accessed through Claude.ai artifacts. On the standalone site, use the 2,500+ built-in vocabulary words instead.</p>
             </div>
           )}
 

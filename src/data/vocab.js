@@ -4070,8 +4070,1582 @@ export const VOCAB_A1 = [
   }
 ];
 
-// A2 Vocabulary
 export const VOCAB_A2 = [
+  {
+    "id": "a2-0001",
+    "word": "glücklich",
+    "article": "",
+    "meaning": "happy",
+    "example": "Ich bin sehr glücklich.",
+    "theme": "Emotions & Feelings",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0002",
+    "word": "traurig",
+    "article": "",
+    "meaning": "sad",
+    "example": "Er ist traurig.",
+    "theme": "Emotions & Feelings",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0003",
+    "word": "wütend",
+    "article": "",
+    "meaning": "angry",
+    "example": "Sie ist wütend.",
+    "theme": "Emotions & Feelings",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0004",
+    "word": "nervös",
+    "article": "",
+    "meaning": "nervous",
+    "example": "Ich bin nervös vor der Prüfung.",
+    "theme": "Emotions & Feelings",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0005",
+    "word": "aufgeregt",
+    "article": "",
+    "meaning": "excited",
+    "example": "Die Kinder sind aufgeregt.",
+    "theme": "Emotions & Feelings",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0006",
+    "word": "zufrieden",
+    "article": "",
+    "meaning": "satisfied",
+    "example": "Ich bin zufrieden mit der Wohnung.",
+    "theme": "Emotions & Feelings",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0007",
+    "word": "enttäuscht",
+    "article": "",
+    "meaning": "disappointed",
+    "example": "Er ist enttäuscht.",
+    "theme": "Emotions & Feelings",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0008",
+    "word": "überrascht",
+    "article": "",
+    "meaning": "surprised",
+    "example": "Ich bin überrascht!",
+    "theme": "Emotions & Feelings",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0009",
+    "word": "stolz",
+    "article": "",
+    "meaning": "proud",
+    "example": "Ich bin stolz auf dich.",
+    "theme": "Emotions & Feelings",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0010",
+    "word": "einsam",
+    "article": "",
+    "meaning": "lonely",
+    "example": "Manchmal fühle ich mich einsam.",
+    "theme": "Emotions & Feelings",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0011",
+    "word": "entspannt",
+    "article": "",
+    "meaning": "relaxed",
+    "example": "Am Wochenende bin ich entspannt.",
+    "theme": "Emotions & Feelings",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0012",
+    "word": "gestresst",
+    "article": "",
+    "meaning": "stressed",
+    "example": "Die Arbeit ist stressig.",
+    "theme": "Emotions & Feelings",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0013",
+    "word": "Angst",
+    "article": "die",
+    "meaning": "fear",
+    "example": "Ich habe Angst vor der Prüfung.",
+    "theme": "Emotions & Feelings",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0014",
+    "word": "Freude",
+    "article": "die",
+    "meaning": "joy",
+    "example": "Große Freude!",
+    "theme": "Emotions & Feelings",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0015",
+    "word": "Sorge",
+    "article": "die",
+    "meaning": "worry",
+    "example": "Ich mache mir Sorgen.",
+    "theme": "Emotions & Feelings",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0016",
+    "word": "Hoffnung",
+    "article": "die",
+    "meaning": "hope",
+    "example": "Ich habe Hoffnung.",
+    "theme": "Emotions & Feelings",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0017",
+    "word": "Liebe",
+    "article": "die",
+    "meaning": "love",
+    "example": "Liebe ist wichtig.",
+    "theme": "Emotions & Feelings",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0018",
+    "word": "Lust",
+    "article": "die",
+    "meaning": "desire/mood",
+    "example": "Ich habe Lust auf Eis.",
+    "theme": "Emotions & Feelings",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0019",
+    "word": "aufwachen",
+    "article": "",
+    "meaning": "to wake up",
+    "example": "Ich wache um 6 Uhr auf.",
+    "theme": "Daily Routine",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0020",
+    "word": "duschen",
+    "article": "",
+    "meaning": "to shower",
+    "example": "Ich dusche morgens.",
+    "theme": "Daily Routine",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0021",
+    "word": "sich anziehen",
+    "article": "",
+    "meaning": "to get dressed",
+    "example": "Ich ziehe mich an.",
+    "theme": "Daily Routine",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0022",
+    "word": "frühstücken",
+    "article": "",
+    "meaning": "to have breakfast",
+    "example": "Ich frühstücke um 7.",
+    "theme": "Daily Routine",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0023",
+    "word": "sich waschen",
+    "article": "",
+    "meaning": "to wash oneself",
+    "example": "Ich wasche mich.",
+    "theme": "Daily Routine",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0024",
+    "word": "sich die Zähne putzen",
+    "article": "",
+    "meaning": "to brush teeth",
+    "example": "Ich putze mir die Zähne.",
+    "theme": "Daily Routine",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0025",
+    "word": "sich rasieren",
+    "article": "",
+    "meaning": "to shave",
+    "example": "Er rasiert sich.",
+    "theme": "Daily Routine",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0026",
+    "word": "sich schminken",
+    "article": "",
+    "meaning": "to put on makeup",
+    "example": "Sie schminkt sich.",
+    "theme": "Daily Routine",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0027",
+    "word": "sich kämmen",
+    "article": "",
+    "meaning": "to comb hair",
+    "example": "Ich kämme mich.",
+    "theme": "Daily Routine",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0028",
+    "word": "sich beeilen",
+    "article": "",
+    "meaning": "to hurry",
+    "example": "Beeil dich!",
+    "theme": "Daily Routine",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0029",
+    "word": "sich ausruhen",
+    "article": "",
+    "meaning": "to rest",
+    "example": "Ich ruhe mich aus.",
+    "theme": "Daily Routine",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0030",
+    "word": "sich hinlegen",
+    "article": "",
+    "meaning": "to lie down",
+    "example": "Ich lege mich hin.",
+    "theme": "Daily Routine",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0031",
+    "word": "aufräumen",
+    "article": "",
+    "meaning": "to tidy up",
+    "example": "Ich räume auf.",
+    "theme": "Daily Routine",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0032",
+    "word": "saubermachen",
+    "article": "",
+    "meaning": "to clean",
+    "example": "Ich mache sauber.",
+    "theme": "Daily Routine",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0033",
+    "word": "staubsaugen",
+    "article": "",
+    "meaning": "to vacuum",
+    "example": "Ich sauge Staub.",
+    "theme": "Daily Routine",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0034",
+    "word": "abwaschen",
+    "article": "",
+    "meaning": "to wash dishes",
+    "example": "Ich wasche ab.",
+    "theme": "Daily Routine",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0035",
+    "word": "bügeln",
+    "article": "",
+    "meaning": "to iron",
+    "example": "Sie bügelt die Hemden.",
+    "theme": "Daily Routine",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0036",
+    "word": "Wäsche waschen",
+    "article": "",
+    "meaning": "to do laundry",
+    "example": "Ich wasche die Wäsche.",
+    "theme": "Daily Routine",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0037",
+    "word": "Allergie",
+    "article": "die",
+    "meaning": "allergy",
+    "example": "Ich habe eine Allergie.",
+    "theme": "Health Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0038",
+    "word": "Erkältung",
+    "article": "die",
+    "meaning": "cold",
+    "example": "Ich habe eine Erkältung.",
+    "theme": "Health Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0039",
+    "word": "Grippe",
+    "article": "die",
+    "meaning": "flu",
+    "example": "Die Grippe ist schlimm.",
+    "theme": "Health Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0040",
+    "word": "Husten",
+    "article": "der",
+    "meaning": "cough",
+    "example": "Ich habe Husten.",
+    "theme": "Health Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0041",
+    "word": "Schnupfen",
+    "article": "der",
+    "meaning": "runny nose",
+    "example": "Ich habe Schnupfen.",
+    "theme": "Health Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0042",
+    "word": "Halsschmerzen",
+    "article": "die",
+    "meaning": "sore throat",
+    "example": "Ich habe Halsschmerzen.",
+    "theme": "Health Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0043",
+    "word": "Durchfall",
+    "article": "der",
+    "meaning": "diarrhea",
+    "example": "Ich habe Durchfall.",
+    "theme": "Health Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0044",
+    "word": "Übelkeit",
+    "article": "die",
+    "meaning": "nausea",
+    "example": "Mir ist übel.",
+    "theme": "Health Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0045",
+    "word": "Blutdruck",
+    "article": "der",
+    "meaning": "blood pressure",
+    "example": "Mein Blutdruck ist hoch.",
+    "theme": "Health Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0046",
+    "word": "Untersuchung",
+    "article": "die",
+    "meaning": "examination",
+    "example": "Die Untersuchung ist morgen.",
+    "theme": "Health Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0047",
+    "word": "Behandlung",
+    "article": "die",
+    "meaning": "treatment",
+    "example": "Die Behandlung dauert eine Woche.",
+    "theme": "Health Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0048",
+    "word": "Tablette",
+    "article": "die",
+    "meaning": "tablet/pill",
+    "example": "Nehmen Sie drei Tabletten pro Tag.",
+    "theme": "Health Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0049",
+    "word": "Salbe",
+    "article": "die",
+    "meaning": "ointment",
+    "example": "Die Salbe hilft.",
+    "theme": "Health Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0050",
+    "word": "Spritze",
+    "article": "die",
+    "meaning": "injection",
+    "example": "Ich bekomme eine Spritze.",
+    "theme": "Health Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0051",
+    "word": "Pflaster",
+    "article": "das",
+    "meaning": "bandage/plaster",
+    "example": "Ich brauche ein Pflaster.",
+    "theme": "Health Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0052",
+    "word": "sich verletzen",
+    "article": "",
+    "meaning": "to hurt oneself",
+    "example": "Ich habe mich verletzt.",
+    "theme": "Health Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0053",
+    "word": "bluten",
+    "article": "",
+    "meaning": "to bleed",
+    "example": "Die Wunde blutet.",
+    "theme": "Health Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0054",
+    "word": "heilen",
+    "article": "",
+    "meaning": "to heal",
+    "example": "Die Wunde heilt.",
+    "theme": "Health Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0055",
+    "word": "Rezept",
+    "article": "das",
+    "meaning": "recipe",
+    "example": "Ich habe ein gutes Rezept.",
+    "theme": "Cooking & Kitchen",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0056",
+    "word": "Zutat",
+    "article": "die",
+    "meaning": "ingredient",
+    "example": "Die Zutaten kaufen.",
+    "theme": "Cooking & Kitchen",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0057",
+    "word": "Pfanne",
+    "article": "die",
+    "meaning": "pan",
+    "example": "Braten Sie es in der Pfanne.",
+    "theme": "Cooking & Kitchen",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0058",
+    "word": "Topf",
+    "article": "der",
+    "meaning": "pot",
+    "example": "Wasser im Topf kochen.",
+    "theme": "Cooking & Kitchen",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0059",
+    "word": "Ofen",
+    "article": "der",
+    "meaning": "oven",
+    "example": "Den Kuchen in den Ofen.",
+    "theme": "Cooking & Kitchen",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0060",
+    "word": "Mikrowelle",
+    "article": "die",
+    "meaning": "microwave",
+    "example": "In der Mikrowelle aufwärmen.",
+    "theme": "Cooking & Kitchen",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0061",
+    "word": "schneiden",
+    "article": "",
+    "meaning": "to cut",
+    "example": "Das Gemüse schneiden.",
+    "theme": "Cooking & Kitchen",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0062",
+    "word": "braten",
+    "article": "",
+    "meaning": "to fry",
+    "example": "Das Fleisch braten.",
+    "theme": "Cooking & Kitchen",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0063",
+    "word": "backen",
+    "article": "",
+    "meaning": "to bake",
+    "example": "Ich backe einen Kuchen.",
+    "theme": "Cooking & Kitchen",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0064",
+    "word": "kochen",
+    "article": "",
+    "meaning": "to boil/cook",
+    "example": "Das Wasser kocht.",
+    "theme": "Cooking & Kitchen",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0065",
+    "word": "rühren",
+    "article": "",
+    "meaning": "to stir",
+    "example": "Die Suppe rühren.",
+    "theme": "Cooking & Kitchen",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0066",
+    "word": "würzen",
+    "article": "",
+    "meaning": "to season",
+    "example": "Mit Salz und Pfeffer würzen.",
+    "theme": "Cooking & Kitchen",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0067",
+    "word": "schälen",
+    "article": "",
+    "meaning": "to peel",
+    "example": "Die Kartoffeln schälen.",
+    "theme": "Cooking & Kitchen",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0068",
+    "word": "mischen",
+    "article": "",
+    "meaning": "to mix",
+    "example": "Die Zutaten mischen.",
+    "theme": "Cooking & Kitchen",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0069",
+    "word": "servieren",
+    "article": "",
+    "meaning": "to serve",
+    "example": "Das Essen servieren.",
+    "theme": "Cooking & Kitchen",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0070",
+    "word": "Freizeit",
+    "article": "die",
+    "meaning": "free time",
+    "example": "In meiner Freizeit lese ich.",
+    "theme": "Leisure & Hobbies",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0071",
+    "word": "Hobby",
+    "article": "das",
+    "meaning": "hobby",
+    "example": "Mein Hobby ist Kochen.",
+    "theme": "Leisure & Hobbies",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0072",
+    "word": "Sport treiben",
+    "article": "",
+    "meaning": "to do sports",
+    "example": "Ich treibe Sport.",
+    "theme": "Leisure & Hobbies",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0073",
+    "word": "joggen",
+    "article": "",
+    "meaning": "to jog",
+    "example": "Ich jogge am Morgen.",
+    "theme": "Leisure & Hobbies",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0074",
+    "word": "wandern",
+    "article": "",
+    "meaning": "to hike",
+    "example": "Wir wandern am Wochenende.",
+    "theme": "Leisure & Hobbies",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0075",
+    "word": "Yoga",
+    "article": "das",
+    "meaning": "yoga",
+    "example": "Ich mache Yoga.",
+    "theme": "Leisure & Hobbies",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0076",
+    "word": "Fitnessstudio",
+    "article": "das",
+    "meaning": "gym",
+    "example": "Ich gehe ins Fitnessstudio.",
+    "theme": "Leisure & Hobbies",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0077",
+    "word": "Mannschaft",
+    "article": "die",
+    "meaning": "team",
+    "example": "Die Mannschaft hat gewonnen.",
+    "theme": "Leisure & Hobbies",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0078",
+    "word": "Spiel",
+    "article": "das",
+    "meaning": "game",
+    "example": "Das Spiel war spannend.",
+    "theme": "Leisure & Hobbies",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0079",
+    "word": "gewinnen",
+    "article": "",
+    "meaning": "to win",
+    "example": "Wir haben gewonnen!",
+    "theme": "Leisure & Hobbies",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0080",
+    "word": "verlieren",
+    "article": "",
+    "meaning": "to lose",
+    "example": "Sie haben verloren.",
+    "theme": "Leisure & Hobbies",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0081",
+    "word": "Musik",
+    "article": "die",
+    "meaning": "music",
+    "example": "Ich höre gern Musik.",
+    "theme": "Leisure & Hobbies",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0082",
+    "word": "Instrument",
+    "article": "das",
+    "meaning": "instrument",
+    "example": "Ich spiele ein Instrument.",
+    "theme": "Leisure & Hobbies",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0083",
+    "word": "Gitarre",
+    "article": "die",
+    "meaning": "guitar",
+    "example": "Er spielt Gitarre.",
+    "theme": "Leisure & Hobbies",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0084",
+    "word": "Klavier",
+    "article": "das",
+    "meaning": "piano",
+    "example": "Sie spielt Klavier.",
+    "theme": "Leisure & Hobbies",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0085",
+    "word": "malen",
+    "article": "",
+    "meaning": "to paint",
+    "example": "Ich male gern.",
+    "theme": "Leisure & Hobbies",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0086",
+    "word": "fotografieren",
+    "article": "",
+    "meaning": "to photograph",
+    "example": "Ich fotografiere gern.",
+    "theme": "Leisure & Hobbies",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0087",
+    "word": "Garten",
+    "article": "der",
+    "meaning": "garden",
+    "example": "Ich arbeite im Garten.",
+    "theme": "Leisure & Hobbies",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0088",
+    "word": "basteln",
+    "article": "",
+    "meaning": "to do crafts",
+    "example": "Die Kinder basteln.",
+    "theme": "Leisure & Hobbies",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0089",
+    "word": "sammeln",
+    "article": "",
+    "meaning": "to collect",
+    "example": "Er sammelt Briefmarken.",
+    "theme": "Leisure & Hobbies",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0090",
+    "word": "Abteilung",
+    "article": "die",
+    "meaning": "department",
+    "example": "In welcher Abteilung arbeiten Sie?",
+    "theme": "At the Office",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0091",
+    "word": "Bericht",
+    "article": "der",
+    "meaning": "report",
+    "example": "Den Bericht schreiben.",
+    "theme": "At the Office",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0092",
+    "word": "Drucker",
+    "article": "der",
+    "meaning": "printer",
+    "example": "Der Drucker funktioniert nicht.",
+    "theme": "At the Office",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0093",
+    "word": "Kopie",
+    "article": "die",
+    "meaning": "copy",
+    "example": "Eine Kopie machen.",
+    "theme": "At the Office",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0094",
+    "word": "Ordner",
+    "article": "der",
+    "meaning": "folder",
+    "example": "Die Dateien im Ordner.",
+    "theme": "At the Office",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0095",
+    "word": "Passwort",
+    "article": "das",
+    "meaning": "password",
+    "example": "Mein Passwort ändern.",
+    "theme": "At the Office",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0096",
+    "word": "Software",
+    "article": "die",
+    "meaning": "software",
+    "example": "Die Software installieren.",
+    "theme": "At the Office",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0097",
+    "word": "Daten",
+    "article": "die",
+    "meaning": "data",
+    "example": "Die Daten analysieren.",
+    "theme": "At the Office",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0098",
+    "word": "Bildschirm",
+    "article": "der",
+    "meaning": "screen",
+    "example": "Der Bildschirm ist groß.",
+    "theme": "At the Office",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0099",
+    "word": "Tastatur",
+    "article": "die",
+    "meaning": "keyboard",
+    "example": "Die Tastatur ist kaputt.",
+    "theme": "At the Office",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0100",
+    "word": "Maus",
+    "article": "die",
+    "meaning": "mouse",
+    "example": "Die Maus funktioniert nicht.",
+    "theme": "At the Office",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0101",
+    "word": "Datei",
+    "article": "die",
+    "meaning": "file",
+    "example": "Die Datei speichern.",
+    "theme": "At the Office",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0102",
+    "word": "herunterladen",
+    "article": "",
+    "meaning": "to download",
+    "example": "Die App herunterladen.",
+    "theme": "At the Office",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0103",
+    "word": "hochladen",
+    "article": "",
+    "meaning": "to upload",
+    "example": "Das Foto hochladen.",
+    "theme": "At the Office",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0104",
+    "word": "ausdrucken",
+    "article": "",
+    "meaning": "to print",
+    "example": "Den Brief ausdrucken.",
+    "theme": "At the Office",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0105",
+    "word": "speichern",
+    "article": "",
+    "meaning": "to save",
+    "example": "Das Dokument speichern.",
+    "theme": "At the Office",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0106",
+    "word": "löschen",
+    "article": "",
+    "meaning": "to delete",
+    "example": "Die E-Mail löschen.",
+    "theme": "At the Office",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0107",
+    "word": "aktualisieren",
+    "article": "",
+    "meaning": "to update",
+    "example": "Die Software aktualisieren.",
+    "theme": "At the Office",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0108",
+    "word": "Beziehung",
+    "article": "die",
+    "meaning": "relationship",
+    "example": "Eine gute Beziehung.",
+    "theme": "Relationships",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0109",
+    "word": "Hochzeit",
+    "article": "die",
+    "meaning": "wedding",
+    "example": "Die Hochzeit ist im Juni.",
+    "theme": "Relationships",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0110",
+    "word": "heiraten",
+    "article": "",
+    "meaning": "to marry",
+    "example": "Sie heiraten nächstes Jahr.",
+    "theme": "Relationships",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0111",
+    "word": "Ehe",
+    "article": "die",
+    "meaning": "marriage",
+    "example": "Eine glückliche Ehe.",
+    "theme": "Relationships",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0112",
+    "word": "sich verlieben",
+    "article": "",
+    "meaning": "to fall in love",
+    "example": "Er hat sich verliebt.",
+    "theme": "Relationships",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0113",
+    "word": "sich trennen",
+    "article": "",
+    "meaning": "to separate",
+    "example": "Sie haben sich getrennt.",
+    "theme": "Relationships",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0114",
+    "word": "Scheidung",
+    "article": "die",
+    "meaning": "divorce",
+    "example": "Die Scheidung war schwer.",
+    "theme": "Relationships",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0115",
+    "word": "Single",
+    "article": "der",
+    "meaning": "single",
+    "example": "Er ist Single.",
+    "theme": "Relationships",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0116",
+    "word": "zusammenleben",
+    "article": "",
+    "meaning": "to live together",
+    "example": "Sie leben zusammen.",
+    "theme": "Relationships",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0117",
+    "word": "Streit",
+    "article": "der",
+    "meaning": "argument",
+    "example": "Ein Streit mit dem Nachbarn.",
+    "theme": "Relationships",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0118",
+    "word": "sich vertragen",
+    "article": "",
+    "meaning": "to get along",
+    "example": "Wir vertragen uns gut.",
+    "theme": "Relationships",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0119",
+    "word": "sich versöhnen",
+    "article": "",
+    "meaning": "to reconcile",
+    "example": "Sie haben sich versöhnt.",
+    "theme": "Relationships",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0120",
+    "word": "Natur",
+    "article": "die",
+    "meaning": "nature",
+    "example": "Die Natur ist schön.",
+    "theme": "Environment & Nature",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0121",
+    "word": "Tier",
+    "article": "das",
+    "meaning": "animal",
+    "example": "Ich mag Tiere.",
+    "theme": "Environment & Nature",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0122",
+    "word": "Hund",
+    "article": "der",
+    "meaning": "dog",
+    "example": "Der Hund bellt.",
+    "theme": "Environment & Nature",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0123",
+    "word": "Katze",
+    "article": "die",
+    "meaning": "cat",
+    "example": "Die Katze schläft.",
+    "theme": "Environment & Nature",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0124",
+    "word": "Vogel",
+    "article": "der",
+    "meaning": "bird",
+    "example": "Der Vogel singt.",
+    "theme": "Environment & Nature",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0125",
+    "word": "Pflanze",
+    "article": "die",
+    "meaning": "plant",
+    "example": "Die Pflanze braucht Wasser.",
+    "theme": "Environment & Nature",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0126",
+    "word": "Wald",
+    "article": "der",
+    "meaning": "forest",
+    "example": "Wir gehen in den Wald.",
+    "theme": "Environment & Nature",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0127",
+    "word": "Wiese",
+    "article": "die",
+    "meaning": "meadow",
+    "example": "Die Kinder spielen auf der Wiese.",
+    "theme": "Environment & Nature",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0128",
+    "word": "Strand",
+    "article": "der",
+    "meaning": "beach",
+    "example": "Am Strand liegen.",
+    "theme": "Environment & Nature",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0129",
+    "word": "Insel",
+    "article": "die",
+    "meaning": "island",
+    "example": "Eine Insel in der Nordsee.",
+    "theme": "Environment & Nature",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0130",
+    "word": "Umweltschutz",
+    "article": "der",
+    "meaning": "environmental protection",
+    "example": "Umweltschutz ist wichtig.",
+    "theme": "Environment & Nature",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0131",
+    "word": "recyceln",
+    "article": "",
+    "meaning": "to recycle",
+    "example": "Wir recyceln Plastik.",
+    "theme": "Environment & Nature",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0132",
+    "word": "Energie",
+    "article": "die",
+    "meaning": "energy",
+    "example": "Erneuerbare Energie.",
+    "theme": "Environment & Nature",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0133",
+    "word": "verschmutzen",
+    "article": "",
+    "meaning": "to pollute",
+    "example": "Die Luft verschmutzen.",
+    "theme": "Environment & Nature",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0134",
+    "word": "sparen",
+    "article": "",
+    "meaning": "to save",
+    "example": "Wasser sparen.",
+    "theme": "Environment & Nature",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0135",
+    "word": "Klima",
+    "article": "das",
+    "meaning": "climate",
+    "example": "Das Klima verändert sich.",
+    "theme": "Environment & Nature",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0136",
+    "word": "Feiertag",
+    "article": "der",
+    "meaning": "public holiday",
+    "example": "Morgen ist Feiertag.",
+    "theme": "German Culture",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0137",
+    "word": "Weihnachten",
+    "article": "das",
+    "meaning": "Christmas",
+    "example": "Frohe Weihnachten!",
+    "theme": "German Culture",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0138",
+    "word": "Ostern",
+    "article": "das",
+    "meaning": "Easter",
+    "example": "Frohe Ostern!",
+    "theme": "German Culture",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0139",
+    "word": "Silvester",
+    "article": "das",
+    "meaning": "New Year's Eve",
+    "example": "Silvester feiern.",
+    "theme": "German Culture",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0140",
+    "word": "Karneval",
+    "article": "der",
+    "meaning": "carnival",
+    "example": "Karneval in Köln.",
+    "theme": "German Culture",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0141",
+    "word": "Oktoberfest",
+    "article": "das",
+    "meaning": "Oktoberfest",
+    "example": "Das Oktoberfest in München.",
+    "theme": "German Culture",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0142",
+    "word": "Tradition",
+    "article": "die",
+    "meaning": "tradition",
+    "example": "Eine deutsche Tradition.",
+    "theme": "German Culture",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0143",
+    "word": "Brauch",
+    "article": "der",
+    "meaning": "custom",
+    "example": "Ein alter Brauch.",
+    "theme": "German Culture",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0144",
+    "word": "Pünktlichkeit",
+    "article": "die",
+    "meaning": "punctuality",
+    "example": "Pünktlichkeit ist wichtig.",
+    "theme": "German Culture",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0145",
+    "word": "Mülltrennung",
+    "article": "die",
+    "meaning": "waste separation",
+    "example": "Mülltrennung in Deutschland.",
+    "theme": "German Culture",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0146",
+    "word": "Sonntagsruhe",
+    "article": "die",
+    "meaning": "Sunday rest",
+    "example": "Am Sonntag sind Geschäfte geschlossen.",
+    "theme": "German Culture",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0147",
+    "word": "Pfand",
+    "article": "der",
+    "meaning": "deposit",
+    "example": "Pfand auf Flaschen.",
+    "theme": "German Culture",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0148",
+    "word": "Führerschein",
+    "article": "der",
+    "meaning": "driver's license",
+    "example": "Ich habe einen Führerschein.",
+    "theme": "Transportation Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0149",
+    "word": "Tankstelle",
+    "article": "die",
+    "meaning": "gas station",
+    "example": "Die nächste Tankstelle.",
+    "theme": "Transportation Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0150",
+    "word": "Stau",
+    "article": "der",
+    "meaning": "traffic jam",
+    "example": "Es gibt Stau auf der Autobahn.",
+    "theme": "Transportation Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0151",
+    "word": "Autobahn",
+    "article": "die",
+    "meaning": "highway",
+    "example": "Die Autobahn ist frei.",
+    "theme": "Transportation Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0152",
+    "word": "Geschwindigkeit",
+    "article": "die",
+    "meaning": "speed",
+    "example": "Die Geschwindigkeit begrenzen.",
+    "theme": "Transportation Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0153",
+    "word": "Unfall",
+    "article": "der",
+    "meaning": "accident",
+    "example": "Ein Unfall auf der Straße.",
+    "theme": "Transportation Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0154",
+    "word": "Werkstatt",
+    "article": "die",
+    "meaning": "repair shop",
+    "example": "Das Auto ist in der Werkstatt.",
+    "theme": "Transportation Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0155",
+    "word": "Versicherung",
+    "article": "die",
+    "meaning": "insurance",
+    "example": "Eine Autoversicherung.",
+    "theme": "Transportation Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0156",
+    "word": "parken",
+    "article": "",
+    "meaning": "to park",
+    "example": "Hier darf man nicht parken.",
+    "theme": "Transportation Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0157",
+    "word": "abbiegen",
+    "article": "",
+    "meaning": "to turn",
+    "example": "An der Kreuzung links abbiegen.",
+    "theme": "Transportation Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0158",
+    "word": "Umleitung",
+    "article": "die",
+    "meaning": "detour",
+    "example": "Es gibt eine Umleitung.",
+    "theme": "Transportation Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0159",
+    "word": "Verspätung",
+    "article": "die",
+    "meaning": "delay",
+    "example": "Der Zug hat Verspätung.",
+    "theme": "Transportation Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0160",
+    "word": "Anschluss",
+    "article": "der",
+    "meaning": "connection",
+    "example": "Den Anschluss verpassen.",
+    "theme": "Transportation Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0161",
+    "word": "Fahrplan",
+    "article": "der",
+    "meaning": "timetable",
+    "example": "Den Fahrplan lesen.",
+    "theme": "Transportation Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0162",
+    "word": "Monatskarte",
+    "article": "die",
+    "meaning": "monthly ticket",
+    "example": "Eine HVV-Monatskarte.",
+    "theme": "Transportation Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0163",
+    "word": "Einzelfahrkarte",
+    "article": "die",
+    "meaning": "single ticket",
+    "example": "Eine Einzelfahrkarte, bitte.",
+    "theme": "Transportation Expanded",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0164",
+    "word": "Gesetz",
+    "article": "das",
+    "meaning": "law",
+    "example": "Das Gesetz verbietet das.",
+    "theme": "Legal & Official",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0165",
+    "word": "Recht",
+    "article": "das",
+    "meaning": "right/law",
+    "example": "Jeder hat das Recht.",
+    "theme": "Legal & Official",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0166",
+    "word": "Pflicht",
+    "article": "die",
+    "meaning": "duty/obligation",
+    "example": "Schulpflicht in Deutschland.",
+    "theme": "Legal & Official",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0167",
+    "word": "Vertrag",
+    "article": "der",
+    "meaning": "contract",
+    "example": "Den Vertrag lesen.",
+    "theme": "Legal & Official",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0168",
+    "word": "Anwalt",
+    "article": "der",
+    "meaning": "lawyer",
+    "example": "Ich brauche einen Anwalt.",
+    "theme": "Legal & Official",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0169",
+    "word": "Gericht",
+    "article": "das",
+    "meaning": "court",
+    "example": "Vor Gericht.",
+    "theme": "Legal & Official",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0170",
+    "word": "Strafe",
+    "article": "die",
+    "meaning": "fine/penalty",
+    "example": "Eine Strafe zahlen.",
+    "theme": "Legal & Official",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0171",
+    "word": "Zeuge",
+    "article": "der",
+    "meaning": "witness",
+    "example": "Er war Zeuge.",
+    "theme": "Legal & Official",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0172",
+    "word": "Antrag",
+    "article": "der",
+    "meaning": "application",
+    "example": "Einen Antrag stellen.",
+    "theme": "Legal & Official",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0173",
+    "word": "Genehmigung",
+    "article": "die",
+    "meaning": "permit/permission",
+    "example": "Eine Genehmigung beantragen.",
+    "theme": "Legal & Official",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0174",
+    "word": "Frist",
+    "article": "die",
+    "meaning": "deadline",
+    "example": "Die Frist einhalten.",
+    "theme": "Legal & Official",
+    "difficulty": 2
+  },
+  {
+    "id": "a2-0175",
+    "word": "Vorschrift",
+    "article": "die",
+    "meaning": "regulation",
+    "example": "Die Vorschriften beachten.",
+    "theme": "Legal & Official",
+    "difficulty": 2
+  },
   {
     "id": "a2-0001",
     "word": "Erfahrung",
@@ -4105,15 +5679,6 @@ export const VOCAB_A2 = [
     "article": "das",
     "meaning": "salary",
     "example": "Das Gehalt ist gut.",
-    "theme": "Work Expanded",
-    "difficulty": 2
-  },
-  {
-    "id": "a2-0005",
-    "word": "Vertrag",
-    "article": "der",
-    "meaning": "contract",
-    "example": "Ich unterschreibe den Vertrag.",
     "theme": "Work Expanded",
     "difficulty": 2
   },
@@ -4375,15 +5940,6 @@ export const VOCAB_A2 = [
     "article": "die",
     "meaning": "tax return",
     "example": "Die Steuererklärung machen.",
-    "theme": "Banking & Money",
-    "difficulty": 2
-  },
-  {
-    "id": "a2-0035",
-    "word": "Versicherung",
-    "article": "die",
-    "meaning": "insurance",
-    "example": "Versicherung ist Pflicht.",
     "theme": "Banking & Money",
     "difficulty": 2
   },
@@ -4896,6 +6452,969 @@ export const VOCAB_A2 = [
 export const VOCAB_B1 = [
   {
     "id": "b1-0001",
+    "word": "Ergebnis",
+    "article": "das",
+    "meaning": "result",
+    "example": "Das Ergebnis ist gut.",
+    "theme": "Abstract Concepts",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0002",
+    "word": "Zusammenhang",
+    "article": "der",
+    "meaning": "connection/context",
+    "example": "Im Zusammenhang mit...",
+    "theme": "Abstract Concepts",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0003",
+    "word": "Ursache",
+    "article": "die",
+    "meaning": "cause",
+    "example": "Die Ursache des Problems.",
+    "theme": "Abstract Concepts",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0004",
+    "word": "Wirkung",
+    "article": "die",
+    "meaning": "effect",
+    "example": "Die Wirkung des Medikaments.",
+    "theme": "Abstract Concepts",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0005",
+    "word": "Einfluss",
+    "article": "der",
+    "meaning": "influence",
+    "example": "Großer Einfluss.",
+    "theme": "Abstract Concepts",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0006",
+    "word": "Bedeutung",
+    "article": "die",
+    "meaning": "meaning/significance",
+    "example": "Die Bedeutung des Wortes.",
+    "theme": "Abstract Concepts",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0007",
+    "word": "Unterschied",
+    "article": "der",
+    "meaning": "difference",
+    "example": "Der Unterschied ist groß.",
+    "theme": "Abstract Concepts",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0008",
+    "word": "Ähnlichkeit",
+    "article": "die",
+    "meaning": "similarity",
+    "example": "Es gibt Ähnlichkeiten.",
+    "theme": "Abstract Concepts",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0009",
+    "word": "Entwicklung",
+    "article": "die",
+    "meaning": "development",
+    "example": "Die Entwicklung der Stadt.",
+    "theme": "Abstract Concepts",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0010",
+    "word": "Veränderung",
+    "article": "die",
+    "meaning": "change",
+    "example": "Große Veränderungen.",
+    "theme": "Abstract Concepts",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0011",
+    "word": "Möglichkeit",
+    "article": "die",
+    "meaning": "possibility",
+    "example": "Es gibt viele Möglichkeiten.",
+    "theme": "Abstract Concepts",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0012",
+    "word": "Gelegenheit",
+    "article": "die",
+    "meaning": "opportunity",
+    "example": "Eine gute Gelegenheit.",
+    "theme": "Abstract Concepts",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0013",
+    "word": "Bedingung",
+    "article": "die",
+    "meaning": "condition",
+    "example": "Unter welchen Bedingungen?",
+    "theme": "Abstract Concepts",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0014",
+    "word": "Voraussetzung",
+    "article": "die",
+    "meaning": "requirement",
+    "example": "Die Voraussetzung erfüllen.",
+    "theme": "Abstract Concepts",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0015",
+    "word": "Eigenschaft",
+    "article": "die",
+    "meaning": "quality/characteristic",
+    "example": "Eine gute Eigenschaft.",
+    "theme": "Abstract Concepts",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0016",
+    "word": "Fähigkeit",
+    "article": "die",
+    "meaning": "ability",
+    "example": "Die Fähigkeit zu lernen.",
+    "theme": "Abstract Concepts",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0017",
+    "word": "Artikel",
+    "article": "der",
+    "meaning": "article",
+    "example": "Den Artikel lesen.",
+    "theme": "Media & News",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0018",
+    "word": "Bericht",
+    "article": "der",
+    "meaning": "report",
+    "example": "Ein Bericht über Hamburg.",
+    "theme": "Media & News",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0019",
+    "word": "Nachricht",
+    "article": "die",
+    "meaning": "news/message",
+    "example": "Die Nachrichten hören.",
+    "theme": "Media & News",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0020",
+    "word": "Schlagzeile",
+    "article": "die",
+    "meaning": "headline",
+    "example": "Die Schlagzeile lesen.",
+    "theme": "Media & News",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0021",
+    "word": "Journalist",
+    "article": "der",
+    "meaning": "journalist",
+    "example": "Der Journalist berichtet.",
+    "theme": "Media & News",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0022",
+    "word": "Interview",
+    "article": "das",
+    "meaning": "interview",
+    "example": "Ein Interview geben.",
+    "theme": "Media & News",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0023",
+    "word": "Kommentar",
+    "article": "der",
+    "meaning": "comment",
+    "example": "Einen Kommentar schreiben.",
+    "theme": "Media & News",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0024",
+    "word": "Diskussion",
+    "article": "die",
+    "meaning": "discussion",
+    "example": "Eine lebhafte Diskussion.",
+    "theme": "Media & News",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0025",
+    "word": "Thema",
+    "article": "das",
+    "meaning": "topic",
+    "example": "Das Thema der Sendung.",
+    "theme": "Media & News",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0026",
+    "word": "Meinungsfreiheit",
+    "article": "die",
+    "meaning": "freedom of speech",
+    "example": "Meinungsfreiheit ist wichtig.",
+    "theme": "Media & News",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0027",
+    "word": "Werbung",
+    "article": "die",
+    "meaning": "advertising",
+    "example": "Zu viel Werbung.",
+    "theme": "Media & News",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0028",
+    "word": "Soziale Medien",
+    "article": "die",
+    "meaning": "social media",
+    "example": "Soziale Medien nutzen.",
+    "theme": "Media & News",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0029",
+    "word": "Fake News",
+    "article": "die",
+    "meaning": "fake news",
+    "example": "Fake News erkennen.",
+    "theme": "Media & News",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0030",
+    "word": "Quelle",
+    "article": "die",
+    "meaning": "source",
+    "example": "Eine zuverlässige Quelle.",
+    "theme": "Media & News",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0031",
+    "word": "Regierung",
+    "article": "die",
+    "meaning": "government",
+    "example": "Die Regierung beschließt.",
+    "theme": "Politics & Society",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0032",
+    "word": "Bundestag",
+    "article": "der",
+    "meaning": "parliament",
+    "example": "Der Bundestag in Berlin.",
+    "theme": "Politics & Society",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0033",
+    "word": "Partei",
+    "article": "die",
+    "meaning": "party",
+    "example": "Welche Partei wählen Sie?",
+    "theme": "Politics & Society",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0034",
+    "word": "Wahl",
+    "article": "die",
+    "meaning": "election",
+    "example": "Die Wahl ist im September.",
+    "theme": "Politics & Society",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0035",
+    "word": "Abgeordnete",
+    "article": "der/die",
+    "meaning": "member of parliament",
+    "example": "Die Abgeordneten stimmen ab.",
+    "theme": "Politics & Society",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0036",
+    "word": "Kanzler",
+    "article": "der",
+    "meaning": "chancellor",
+    "example": "Der Bundeskanzler.",
+    "theme": "Politics & Society",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0037",
+    "word": "Präsident",
+    "article": "der",
+    "meaning": "president",
+    "example": "Der Bundespräsident.",
+    "theme": "Politics & Society",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0038",
+    "word": "Ministerium",
+    "article": "das",
+    "meaning": "ministry",
+    "example": "Das Außenministerium.",
+    "theme": "Politics & Society",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0039",
+    "word": "Bürger",
+    "article": "der",
+    "meaning": "citizen",
+    "example": "Die Bürger haben Rechte.",
+    "theme": "Politics & Society",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0040",
+    "word": "Einwohner",
+    "article": "der",
+    "meaning": "resident",
+    "example": "Hamburg hat 1,8 Millionen Einwohner.",
+    "theme": "Politics & Society",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0041",
+    "word": "Steuer",
+    "article": "die",
+    "meaning": "tax",
+    "example": "Steuern zahlen.",
+    "theme": "Politics & Society",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0042",
+    "word": "Sozialversicherung",
+    "article": "die",
+    "meaning": "social insurance",
+    "example": "Die Sozialversicherung.",
+    "theme": "Politics & Society",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0043",
+    "word": "Rente",
+    "article": "die",
+    "meaning": "pension",
+    "example": "In Rente gehen.",
+    "theme": "Politics & Society",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0044",
+    "word": "Arbeitslosigkeit",
+    "article": "die",
+    "meaning": "unemployment",
+    "example": "Die Arbeitslosigkeit sinkt.",
+    "theme": "Politics & Society",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0045",
+    "word": "Migration",
+    "article": "die",
+    "meaning": "migration",
+    "example": "Migration nach Deutschland.",
+    "theme": "Politics & Society",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0046",
+    "word": "Flüchtling",
+    "article": "der",
+    "meaning": "refugee",
+    "example": "Flüchtlinge aufnehmen.",
+    "theme": "Politics & Society",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0047",
+    "word": "Asyl",
+    "article": "das",
+    "meaning": "asylum",
+    "example": "Asyl beantragen.",
+    "theme": "Politics & Society",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0048",
+    "word": "Staatsbürgerschaft",
+    "article": "die",
+    "meaning": "citizenship",
+    "example": "Die deutsche Staatsbürgerschaft.",
+    "theme": "Politics & Society",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0049",
+    "word": "Karriere",
+    "article": "die",
+    "meaning": "career",
+    "example": "Karriere machen.",
+    "theme": "Work Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0050",
+    "word": "Fortbildung",
+    "article": "die",
+    "meaning": "further training",
+    "example": "Eine Fortbildung machen.",
+    "theme": "Work Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0051",
+    "word": "Qualifikation",
+    "article": "die",
+    "meaning": "qualification",
+    "example": "Die nötigen Qualifikationen.",
+    "theme": "Work Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0052",
+    "word": "Berufserfahrung",
+    "article": "die",
+    "meaning": "work experience",
+    "example": "Berufserfahrung sammeln.",
+    "theme": "Work Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0053",
+    "word": "Arbeitszeugnis",
+    "article": "das",
+    "meaning": "work reference",
+    "example": "Ein gutes Arbeitszeugnis.",
+    "theme": "Work Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0054",
+    "word": "Teamarbeit",
+    "article": "die",
+    "meaning": "teamwork",
+    "example": "Teamarbeit ist wichtig.",
+    "theme": "Work Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0055",
+    "word": "Führung",
+    "article": "die",
+    "meaning": "leadership",
+    "example": "Führungserfahrung haben.",
+    "theme": "Work Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0056",
+    "word": "selbstständig",
+    "article": "",
+    "meaning": "self-employed/independent",
+    "example": "Er ist selbstständig.",
+    "theme": "Work Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0057",
+    "word": "verantwortlich",
+    "article": "",
+    "meaning": "responsible",
+    "example": "Ich bin dafür verantwortlich.",
+    "theme": "Work Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0058",
+    "word": "zuverlässig",
+    "article": "",
+    "meaning": "reliable",
+    "example": "Er ist zuverlässig.",
+    "theme": "Work Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0059",
+    "word": "flexibel",
+    "article": "",
+    "meaning": "flexible",
+    "example": "Flexible Arbeitszeiten.",
+    "theme": "Work Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0060",
+    "word": "motiviert",
+    "article": "",
+    "meaning": "motivated",
+    "example": "Ich bin motiviert.",
+    "theme": "Work Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0061",
+    "word": "Geschäftsreise",
+    "article": "die",
+    "meaning": "business trip",
+    "example": "Eine Geschäftsreise nach Berlin.",
+    "theme": "Work Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0062",
+    "word": "Home-Office",
+    "article": "das",
+    "meaning": "home office",
+    "example": "Im Home-Office arbeiten.",
+    "theme": "Work Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0063",
+    "word": "Arbeitgeber",
+    "article": "der",
+    "meaning": "employer",
+    "example": "Mein Arbeitgeber ist adjoe.",
+    "theme": "Work Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0064",
+    "word": "Arbeitnehmer",
+    "article": "der",
+    "meaning": "employee",
+    "example": "Die Arbeitnehmer haben Rechte.",
+    "theme": "Work Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0065",
+    "word": "Gewerkschaft",
+    "article": "die",
+    "meaning": "labor union",
+    "example": "Die Gewerkschaft verhandelt.",
+    "theme": "Work Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0066",
+    "word": "Betriebsrat",
+    "article": "der",
+    "meaning": "works council",
+    "example": "Der Betriebsrat entscheidet.",
+    "theme": "Work Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0067",
+    "word": "Bildung",
+    "article": "die",
+    "meaning": "education",
+    "example": "Bildung ist wichtig.",
+    "theme": "Education & Learning",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0068",
+    "word": "Studium",
+    "article": "das",
+    "meaning": "university studies",
+    "example": "Das Studium dauert 3 Jahre.",
+    "theme": "Education & Learning",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0069",
+    "word": "Abschluss",
+    "article": "der",
+    "meaning": "degree/graduation",
+    "example": "Einen Abschluss machen.",
+    "theme": "Education & Learning",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0070",
+    "word": "Diplom",
+    "article": "das",
+    "meaning": "diploma",
+    "example": "Ein Diplom in Informatik.",
+    "theme": "Education & Learning",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0071",
+    "word": "Forschung",
+    "article": "die",
+    "meaning": "research",
+    "example": "Forschung betreiben.",
+    "theme": "Education & Learning",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0072",
+    "word": "Wissenschaft",
+    "article": "die",
+    "meaning": "science",
+    "example": "Die Wissenschaft entwickelt sich.",
+    "theme": "Education & Learning",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0073",
+    "word": "Vortrag",
+    "article": "der",
+    "meaning": "lecture/talk",
+    "example": "Einen Vortrag halten.",
+    "theme": "Education & Learning",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0074",
+    "word": "Seminar",
+    "article": "das",
+    "meaning": "seminar",
+    "example": "An einem Seminar teilnehmen.",
+    "theme": "Education & Learning",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0075",
+    "word": "Stipendium",
+    "article": "das",
+    "meaning": "scholarship",
+    "example": "Ein Stipendium bekommen.",
+    "theme": "Education & Learning",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0076",
+    "word": "Bibliothek",
+    "article": "die",
+    "meaning": "library",
+    "example": "In der Bibliothek lernen.",
+    "theme": "Education & Learning",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0077",
+    "word": "sich weiterbilden",
+    "article": "",
+    "meaning": "to continue education",
+    "example": "Ich bilde mich weiter.",
+    "theme": "Education & Learning",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0078",
+    "word": "analysieren",
+    "article": "",
+    "meaning": "to analyze",
+    "example": "Die Daten analysieren.",
+    "theme": "Education & Learning",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0079",
+    "word": "recherchieren",
+    "article": "",
+    "meaning": "to research",
+    "example": "Im Internet recherchieren.",
+    "theme": "Education & Learning",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0080",
+    "word": "präsentieren",
+    "article": "",
+    "meaning": "to present",
+    "example": "Die Ergebnisse präsentieren.",
+    "theme": "Education & Learning",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0081",
+    "word": "meiner Meinung nach",
+    "article": "",
+    "meaning": "in my opinion",
+    "example": "Meiner Meinung nach ist das richtig.",
+    "theme": "Expressing Opinions",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0082",
+    "word": "einerseits",
+    "article": "",
+    "meaning": "on one hand",
+    "example": "Einerseits ist es gut.",
+    "theme": "Expressing Opinions",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0083",
+    "word": "andererseits",
+    "article": "",
+    "meaning": "on the other hand",
+    "example": "Andererseits gibt es Probleme.",
+    "theme": "Expressing Opinions",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0084",
+    "word": "erstens",
+    "article": "",
+    "meaning": "firstly",
+    "example": "Erstens ist es teuer.",
+    "theme": "Expressing Opinions",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0085",
+    "word": "zweitens",
+    "article": "",
+    "meaning": "secondly",
+    "example": "Zweitens dauert es lang.",
+    "theme": "Expressing Opinions",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0086",
+    "word": "außerdem",
+    "article": "",
+    "meaning": "furthermore",
+    "example": "Außerdem ist es kompliziert.",
+    "theme": "Expressing Opinions",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0087",
+    "word": "trotzdem",
+    "article": "",
+    "meaning": "nevertheless",
+    "example": "Trotzdem mache ich es.",
+    "theme": "Expressing Opinions",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0088",
+    "word": "deshalb",
+    "article": "",
+    "meaning": "therefore",
+    "example": "Deshalb lerne ich Deutsch.",
+    "theme": "Expressing Opinions",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0089",
+    "word": "obwohl",
+    "article": "",
+    "meaning": "although",
+    "example": "Obwohl es schwer ist.",
+    "theme": "Expressing Opinions",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0090",
+    "word": "dagegen",
+    "article": "",
+    "meaning": "against it",
+    "example": "Ich bin dagegen.",
+    "theme": "Expressing Opinions",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0091",
+    "word": "dafür",
+    "article": "",
+    "meaning": "for it",
+    "example": "Ich bin dafür.",
+    "theme": "Expressing Opinions",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0092",
+    "word": "behaupten",
+    "article": "",
+    "meaning": "to claim",
+    "example": "Er behauptet, dass...",
+    "theme": "Expressing Opinions",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0093",
+    "word": "widersprechen",
+    "article": "",
+    "meaning": "to contradict",
+    "example": "Ich muss widersprechen.",
+    "theme": "Expressing Opinions",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0094",
+    "word": "begründen",
+    "article": "",
+    "meaning": "to justify",
+    "example": "Können Sie das begründen?",
+    "theme": "Expressing Opinions",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0095",
+    "word": "kritisieren",
+    "article": "",
+    "meaning": "to criticize",
+    "example": "Die Entscheidung kritisieren.",
+    "theme": "Expressing Opinions",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0096",
+    "word": "bewerten",
+    "article": "",
+    "meaning": "to evaluate",
+    "example": "Die Situation bewerten.",
+    "theme": "Expressing Opinions",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0097",
+    "word": "vergleichen",
+    "article": "",
+    "meaning": "to compare",
+    "example": "Zwei Angebote vergleichen.",
+    "theme": "Expressing Opinions",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0098",
+    "word": "Eigentum",
+    "article": "das",
+    "meaning": "property",
+    "example": "Eigentum kaufen.",
+    "theme": "Housing & Living Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0099",
+    "word": "Grundstück",
+    "article": "das",
+    "meaning": "plot of land",
+    "example": "Ein Grundstück kaufen.",
+    "theme": "Housing & Living Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0100",
+    "word": "Makler",
+    "article": "der",
+    "meaning": "real estate agent",
+    "example": "Der Makler zeigt die Wohnung.",
+    "theme": "Housing & Living Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0101",
+    "word": "Provision",
+    "article": "die",
+    "meaning": "commission",
+    "example": "Die Provision des Maklers.",
+    "theme": "Housing & Living Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0102",
+    "word": "Wohngemeinschaft",
+    "article": "die",
+    "meaning": "shared apartment",
+    "example": "In einer WG wohnen.",
+    "theme": "Housing & Living Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0103",
+    "word": "Genossenschaft",
+    "article": "die",
+    "meaning": "cooperative",
+    "example": "Eine Wohnungsgenossenschaft.",
+    "theme": "Housing & Living Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0104",
+    "word": "Bauamt",
+    "article": "das",
+    "meaning": "building authority",
+    "example": "Beim Bauamt nachfragen.",
+    "theme": "Housing & Living Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0105",
+    "word": "Baugenehmigung",
+    "article": "die",
+    "meaning": "building permit",
+    "example": "Eine Baugenehmigung beantragen.",
+    "theme": "Housing & Living Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0106",
+    "word": "Sanierung",
+    "article": "die",
+    "meaning": "renovation",
+    "example": "Die Sanierung des Hauses.",
+    "theme": "Housing & Living Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0107",
+    "word": "Energieausweis",
+    "article": "der",
+    "meaning": "energy certificate",
+    "example": "Den Energieausweis vorlegen.",
+    "theme": "Housing & Living Advanced",
+    "difficulty": 3
+  },
+  {
+    "id": "b1-0001",
     "word": "Vorstellungsgespräch",
     "article": "das",
     "meaning": "interview",
@@ -4945,15 +7464,6 @@ export const VOCAB_B1 = [
     "article": "die",
     "meaning": "summary",
     "example": "Die Zusammenfassung bitte.",
-    "theme": "Professional",
-    "difficulty": 3
-  },
-  {
-    "id": "b1-0007",
-    "word": "Bericht",
-    "article": "der",
-    "meaning": "report",
-    "example": "Den Bericht schreiben.",
     "theme": "Professional",
     "difficulty": 3
   },
