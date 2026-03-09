@@ -33,6 +33,10 @@ export const numberToGerman = NTG;
 import { CONVERSATIONS as CONV } from './data/conversations'
 export const CONVERSATIONS = CONV;
 
+// ─── GOETHE EXAM ───
+import { GOETHE_A1_EXAM } from './data/goethe_exam'
+export { GOETHE_A1_EXAM };
+
 // ─── PRONUNCIATION GUIDE (Day 1 essential) ───
 export const PRONUNCIATION = {
   alphabet: [

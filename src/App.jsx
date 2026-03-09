@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import {
   LEVELS, EXAM_CATEGORIES, VOCABULARY, GRAMMAR, READING_EXERCISES,
   WRITING_EXERCISES, SPEAKING_EXERCISES, LISTENING_EXERCISES,
-  DAILY_PHRASES, STUDY_PLAN, PRONUNCIATION, GUIDED_LESSONS, numberToGerman, CONVERSATIONS
+  DAILY_PHRASES, STUDY_PLAN, PRONUNCIATION, GUIDED_LESSONS, numberToGerman, CONVERSATIONS, GOETHE_A1_EXAM
 } from './data'
 import { LID_QUESTIONS } from './lid_data'
 import './styles.css'
@@ -1035,6 +1035,370 @@ function DailyPractice({ level, vocabProgress, markVocab }) {
   )
 }
 
+// ─── GOETHE A1 EXAM SIMULATOR ───
+function GoetheExam() {
+  const { speak, speaking } = useVoice()
+  const [section, setSection] = useState(null) // null=menu, 'hoeren','lesen','schreiben','sprechen','results'
+  const [answers, setAnswers] = useState({})
+  const [showResults, setShowResults] = useState(false)
+  const [timer, setTimer] = useState(0)
+  const [timerActive, setTimerActive] = useState(false)
+  const [showTranscripts, setShowTranscripts] = useState({})
+  const timerRef = useRef(null)
+
+  const E = GOETHE_A1_EXAM
+
+  useEffect(() => {
+    if (timerActive && timer > 0) {
+      timerRef.current = setInterval(() => setTimer(t => t > 0 ? t - 1 : 0), 1000)
+      return () => clearInterval(timerRef.current)
+    }
+  }, [timerActive, timer])
+
+  const startSection = (s) => {
+    setSection(s)
+    setShowResults(false)
+    const times = { hoeren: 20, lesen: 25, schreiben: 20, sprechen: 15 }
+    setTimer((times[s] || 20) * 60)
+    setTimerActive(true)
+  }
+
+  const setAns = (key, val) => setAnswers(p => ({ ...p, [key]: val }))
+  const getAns = (key) => answers[key]
+
+  const calcScore = () => {
+    let score = 0
+    // Hören Teil 1 (6 questions, 1pt each)
+    E.hoeren.teil1.questions.forEach(q => { if (getAns(`h1-${q.num}`) === q.ans) score++ })
+    // Hören Teil 2 (4 questions, 1pt each)
+    E.hoeren.teil2.questions.forEach(q => { if (getAns(`h2-${q.num}`) === q.ans) score++ })
+    // Hören Teil 3 (5 questions, 1pt each)
+    E.hoeren.teil3.questions.forEach(q => { if (getAns(`h3-${q.num}`) === q.ans) score++ })
+    // Lesen Teil 1 (5 questions, 1pt each)
+    E.lesen.teil1.questions.forEach(q => { if (getAns(`l1-${q.num}`) === q.ans) score++ })
+    // Lesen Teil 2 (5 questions, 1pt each)
+    E.lesen.teil2.questions.forEach(q => { if (getAns(`l2-${q.num}`) === q.ans) score++ })
+    // Lesen Teil 3 (5 questions, 1pt each)
+    E.lesen.teil3.questions.forEach(q => { if (getAns(`l3-${q.num}`) === q.ans) score++ })
+    return score
+  }
+
+  const formatTime = (s) => `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`
+
+  // ─── MENU ───
+  if (!section) {
+    const score = calcScore()
+    const answered = Object.keys(answers).length
+    return (
+      <div className="fade-up">
+        <div className="lid-info-card" style={{ background: 'var(--purple-dim)', borderColor: 'var(--purple)' }}>
+          <h4 style={{ color: 'var(--purple)', fontSize: 16 }}>🎓 Goethe-Zertifikat A1: Start Deutsch 1</h4>
+          <p>Official model exam from the Goethe-Institut. Practice each section exactly as it appears in the real test. Hören uses TTS to simulate the audio.</p>
+          {answered > 0 && <p style={{ marginTop: 8, fontWeight: 600 }}>Current score: {score}/30 ({Math.round(score/30*100)}%){score >= 18 ? ' ✅ PASS' : ' — need 60% to pass'}</p>}
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 16 }}>
+          {[
+            { id:'hoeren', icon:'🎧', title:'Hören', desc:'Listening — 20 min, 15 questions', time:'20 min', qs:15 },
+            { id:'lesen', icon:'📖', title:'Lesen', desc:'Reading — 25 min, 15 questions', time:'25 min', qs:15 },
+            { id:'schreiben', icon:'✍️', title:'Schreiben', desc:'Writing — 20 min, 2 tasks', time:'20 min', qs:'2 tasks' },
+            { id:'sprechen', icon:'🗣️', title:'Sprechen', desc:'Speaking — 15 min, 3 tasks', time:'15 min', qs:'3 tasks' },
+          ].map(s => (
+            <div key={s.id} className="card" style={{ cursor: 'pointer', textAlign: 'center' }} onClick={() => startSection(s.id)}>
+              <div style={{ fontSize: 32 }}>{s.icon}</div>
+              <h3 style={{ fontFamily: 'var(--fd)', marginTop: 6, marginBottom: 2 }}>{s.title}</h3>
+              <p style={{ fontSize: 11, color: 'var(--text-3)' }}>{s.desc}</p>
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 8 }}>
+                <span className="pill" style={{ fontSize: 10 }}>⏱ {s.time}</span>
+                <span className="pill" style={{ fontSize: 10 }}>{s.qs}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {answered > 0 && (
+          <div style={{ textAlign: 'center', marginTop: 16 }}>
+            <button className="secondary-btn" onClick={() => { setAnswers({}); setShowTranscripts({}) }}>🔄 Reset All Answers</button>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // ─── TIMER BAR ───
+  const TimerBar = () => (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14, padding: '8px 14px', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 'var(--rs)' }}>
+      <button className="secondary-btn" onClick={() => { setSection(null); setTimerActive(false) }} style={{ padding: '4px 12px', fontSize: 11 }}>← Back</button>
+      <span style={{ fontFamily: 'var(--fm)', fontSize: 14, color: timer < 120 ? 'var(--red)' : 'var(--text-2)' }}>⏱ {formatTime(timer)}</span>
+      <button className="secondary-btn" onClick={() => setTimerActive(!timerActive)} style={{ padding: '4px 12px', fontSize: 11 }}>{timerActive ? '⏸ Pause' : '▶ Resume'}</button>
+    </div>
+  )
+
+  // Helper: ABC question renderer
+  const ABCQuestion = ({ q, keyPrefix }) => (
+    <div className="lid-question-card">
+      <div className="lid-q-num">Frage {q.num}</div>
+      <div className="lid-q-text">{q.q}</div>
+      <div className="lid-options">
+        {q.opts.map((opt, j) => {
+          const selected = getAns(`${keyPrefix}-${q.num}`) === j
+          const isCorrect = showResults && j === q.ans
+          const isWrong = showResults && selected && j !== q.ans
+          return (
+            <button key={j} className={`lid-opt ${selected ? 'selected' : ''} ${isCorrect ? 'correct' : ''} ${isWrong ? 'wrong' : ''}`}
+              onClick={() => !showResults && setAns(`${keyPrefix}-${q.num}`, j)} disabled={showResults}>
+              <span className="lid-opt-letter">{String.fromCharCode(97+j)}</span>
+              <span className="lid-opt-text">{opt}</span>
+            </button>
+          )
+        })}
+      </div>
+      {q.transcript && (
+        <div style={{ marginTop: 10 }}>
+          <button className="secondary-btn" style={{ fontSize: 10, padding: '3px 10px' }}
+            onClick={() => { speak(q.transcript, 0.8) }}>🔊 Hören</button>
+          {showResults && (
+            <button className="secondary-btn" style={{ fontSize: 10, padding: '3px 10px', marginLeft: 6 }}
+              onClick={() => setShowTranscripts(p => ({ ...p, [`${keyPrefix}-${q.num}`]: !p[`${keyPrefix}-${q.num}`] }))}>
+              📄 Transkript
+            </button>
+          )}
+          {showTranscripts[`${keyPrefix}-${q.num}`] && (
+            <div className="reading-text" style={{ marginTop: 8, fontSize: 12 }}>{q.transcript}</div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+
+  // Helper: Richtig/Falsch question
+  const RFQuestion = ({ q, keyPrefix, showSign }) => (
+    <div className="lid-question-card">
+      <div className="lid-q-num">Frage {q.num}</div>
+      {showSign && q.context && <div style={{ fontSize: 10, color: 'var(--accent)', fontFamily: 'var(--fm)', marginBottom: 4 }}>{q.context}</div>}
+      {showSign && q.sign && <div className="reading-text" style={{ marginBottom: 10, fontSize: 13 }}>{q.sign}</div>}
+      <div className="lid-q-text">{q.q}</div>
+      <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+        {[true, false].map(val => {
+          const label = val ? 'Richtig' : 'Falsch'
+          const selected = getAns(`${keyPrefix}-${q.num}`) === val
+          const isCorrect = showResults && val === q.ans
+          const isWrong = showResults && selected && val !== q.ans
+          return (
+            <button key={label} className={`opt-btn ${selected ? 'selected' : ''} ${isCorrect ? 'correct-answer' : ''} ${isWrong ? 'wrong' : ''}`}
+              onClick={() => !showResults && setAns(`${keyPrefix}-${q.num}`, val)} disabled={showResults}
+              style={{ flex: 1, padding: '10px 16px', fontSize: 13, fontWeight: 600 }}>
+              {label}
+            </button>
+          )
+        })}
+      </div>
+      {q.transcript && (
+        <div style={{ marginTop: 8 }}>
+          <button className="secondary-btn" style={{ fontSize: 10, padding: '3px 10px' }}
+            onClick={() => speak(q.transcript, 0.8)}>🔊 Hören</button>
+        </div>
+      )}
+      {showResults && q.hint && <div style={{ marginTop: 8, fontSize: 11, color: 'var(--accent)', fontStyle: 'italic' }}>💡 {q.hint}</div>}
+    </div>
+  )
+
+  // ─── HÖREN SECTION ───
+  if (section === 'hoeren') return (
+    <div className="fade-up">
+      <TimerBar />
+      <h2 style={{ fontFamily: 'var(--fd)', marginBottom: 4 }}>🎧 Hören — Listening</h2>
+      <p className="section-desc" style={{ marginBottom: 16 }}>Click 🔊 on each question to hear the audio (TTS). In the real exam, audio plays automatically.</p>
+
+      <h3 style={{ fontFamily: 'var(--fd)', fontSize: 15, marginBottom: 8, color: 'var(--purple)' }}>Teil 1 — {E.hoeren.teil1.instructions}</h3>
+      {E.hoeren.teil1.questions.map(q => <ABCQuestion key={q.num} q={q} keyPrefix="h1" />)}
+
+      <h3 style={{ fontFamily: 'var(--fd)', fontSize: 15, margin: '20px 0 8px', color: 'var(--purple)' }}>Teil 2 — {E.hoeren.teil2.instructions}</h3>
+      {E.hoeren.teil2.questions.map(q => <RFQuestion key={q.num} q={q} keyPrefix="h2" />)}
+
+      <h3 style={{ fontFamily: 'var(--fd)', fontSize: 15, margin: '20px 0 8px', color: 'var(--purple)' }}>Teil 3 — {E.hoeren.teil3.instructions}</h3>
+      {E.hoeren.teil3.questions.map(q => <ABCQuestion key={q.num} q={q} keyPrefix="h3" />)}
+
+      <div style={{ textAlign: 'center', marginTop: 20 }}>
+        <button className="primary-btn" onClick={() => setShowResults(true)}>✅ Check Answers</button>
+        {showResults && (
+          <div className="score-card passed" style={{ marginTop: 12, justifyContent: 'center' }}>
+            <span>Hören: {E.hoeren.teil1.questions.filter(q=>getAns(`h1-${q.num}`)===q.ans).length + E.hoeren.teil2.questions.filter(q=>getAns(`h2-${q.num}`)===q.ans).length + E.hoeren.teil3.questions.filter(q=>getAns(`h3-${q.num}`)===q.ans).length} / 15</span>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+
+  // ─── LESEN SECTION ───
+  if (section === 'lesen') return (
+    <div className="fade-up">
+      <TimerBar />
+      <h2 style={{ fontFamily: 'var(--fd)', marginBottom: 4 }}>📖 Lesen — Reading</h2>
+      <p className="section-desc" style={{ marginBottom: 16 }}>Read the texts carefully and answer the questions.</p>
+
+      <h3 style={{ fontFamily: 'var(--fd)', fontSize: 15, marginBottom: 8, color: 'var(--purple)' }}>Teil 1 — Richtig oder Falsch?</h3>
+      {E.lesen.teil1.texts.map((t, i) => (
+        <div key={i} className="reading-exercise" style={{ marginBottom: 12 }}>
+          <div style={{ fontSize: 11, color: 'var(--accent)', fontFamily: 'var(--fm)', fontWeight: 600, marginBottom: 6 }}>{t.label}</div>
+          <div className="reading-text">{t.text}</div>
+        </div>
+      ))}
+      {E.lesen.teil1.questions.map(q => <RFQuestion key={q.num} q={q} keyPrefix="l1" />)}
+
+      <h3 style={{ fontFamily: 'var(--fd)', fontSize: 15, margin: '20px 0 8px', color: 'var(--purple)' }}>Teil 2 — Wo finden Sie Informationen? a oder b?</h3>
+      {E.lesen.teil2.questions.map(q => (
+        <div key={q.num} className="lid-question-card">
+          <div className="lid-q-num">Frage {q.num}</div>
+          <div className="lid-q-text">{q.q}</div>
+          <div className="lid-options" style={{ marginTop: 10 }}>
+            {['a','b'].map(letter => {
+              const opt = letter === 'a' ? q.optA : q.optB
+              const selected = getAns(`l2-${q.num}`) === letter
+              const isCorrect = showResults && letter === q.ans
+              const isWrong = showResults && selected && letter !== q.ans
+              return (
+                <button key={letter} className={`lid-opt ${selected ? 'selected' : ''} ${isCorrect ? 'correct' : ''} ${isWrong ? 'wrong' : ''}`}
+                  onClick={() => !showResults && setAns(`l2-${q.num}`, letter)} disabled={showResults}>
+                  <span className="lid-opt-letter">{letter}</span>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 600, fontSize: 12 }}>{opt.label}</div>
+                    <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 2 }}>{opt.desc}</div>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      ))}
+
+      <h3 style={{ fontFamily: 'var(--fd)', fontSize: 15, margin: '20px 0 8px', color: 'var(--purple)' }}>Teil 3 — Schilder und Hinweise</h3>
+      {E.lesen.teil3.questions.map(q => <RFQuestion key={q.num} q={q} keyPrefix="l3" showSign={true} />)}
+
+      <div style={{ textAlign: 'center', marginTop: 20 }}>
+        <button className="primary-btn" onClick={() => setShowResults(true)}>✅ Check Answers</button>
+        {showResults && (
+          <div className="score-card passed" style={{ marginTop: 12, justifyContent: 'center' }}>
+            <span>Lesen: {E.lesen.teil1.questions.filter(q=>getAns(`l1-${q.num}`)===q.ans).length + E.lesen.teil2.questions.filter(q=>getAns(`l2-${q.num}`)===q.ans).length + E.lesen.teil3.questions.filter(q=>getAns(`l3-${q.num}`)===q.ans).length} / 15</span>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+
+  // ─── SCHREIBEN SECTION ───
+  if (section === 'schreiben') {
+    const S = E.schreiben
+    return (
+    <div className="fade-up">
+      <TimerBar />
+      <h2 style={{ fontFamily: 'var(--fd)', marginBottom: 4 }}>✍️ Schreiben — Writing</h2>
+
+      <h3 style={{ fontFamily: 'var(--fd)', fontSize: 15, marginBottom: 8, color: 'var(--purple)' }}>Teil 1 — Formular ausfüllen</h3>
+      <div className="card">
+        <p style={{ fontSize: 12, color: 'var(--text-2)', lineHeight: 1.7, marginBottom: 14 }}>{S.teil1.instructions}</p>
+        <h4 style={{ fontFamily: 'var(--fd)', textAlign: 'center', marginBottom: 12 }}>{S.teil1.title}</h4>
+        {Object.entries(S.teil1.given).map(([k,v]) => (
+          <div key={k} style={{ display: 'flex', gap: 10, marginBottom: 6, padding: '6px 0', borderBottom: '1px solid var(--border)' }}>
+            <span style={{ width: 180, fontSize: 12, color: 'var(--text-3)', flexShrink: 0 }}>{k}:</span>
+            <span style={{ fontSize: 13, fontWeight: 600 }}>{v}</span>
+          </div>
+        ))}
+        {S.teil1.fields.map(f => (
+          <div key={f.num} style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 6, padding: '6px 0', borderBottom: '1px solid var(--border)' }}>
+            <span style={{ width: 180, fontSize: 12, color: 'var(--text-3)', flexShrink: 0 }}>({f.num}) {f.label}:</span>
+            <input value={getAns(`s1-${f.num}`) || ''} onChange={e => setAns(`s1-${f.num}`, e.target.value)}
+              style={{ flex: 1, background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--rs)', padding: '6px 10px', fontSize: 13, color: 'var(--text)', outline: 'none' }}
+              placeholder="..." />
+            {showResults && <span style={{ fontSize: 11, color: 'var(--green)', fontFamily: 'var(--fm)', whiteSpace: 'nowrap' }}>✓ {f.answer}</span>}
+          </div>
+        ))}
+      </div>
+
+      <h3 style={{ fontFamily: 'var(--fd)', fontSize: 15, margin: '20px 0 8px', color: 'var(--purple)' }}>Teil 2 — Brief schreiben (~30 Wörter)</h3>
+      <div className="card">
+        <p style={{ fontSize: 12, color: 'var(--text-2)', marginBottom: 10 }}>{S.teil2.instructions}</p>
+        <ul style={{ fontSize: 12, color: 'var(--text-2)', marginBottom: 12, paddingLeft: 20 }}>
+          {S.teil2.prompts.map((p,i) => <li key={i} style={{ marginBottom: 4 }}>{p}</li>)}
+        </ul>
+        <p style={{ fontSize: 10, color: 'var(--text-3)', fontStyle: 'italic', marginBottom: 10 }}>{S.teil2.hint}</p>
+        <textarea className="writing-area" rows={8} value={getAns('s2-text') || ''}
+          onChange={e => setAns('s2-text', e.target.value)}
+          placeholder="Sehr geehrte Damen und Herren, ..." />
+        <div className="writing-footer">
+          <span className="word-count">{(getAns('s2-text') || '').split(/\s+/).filter(Boolean).length} Wörter</span>
+        </div>
+        {showResults && (
+          <div className="sample-answer" style={{ marginTop: 12 }}>
+            <h4>Beispielantwort (10 Punkte):</h4>
+            <div className="sample-text">{S.teil2.sampleAnswer}</div>
+          </div>
+        )}
+      </div>
+
+      <div style={{ textAlign: 'center', marginTop: 20 }}>
+        <button className="primary-btn" onClick={() => setShowResults(true)}>✅ Check Answers</button>
+      </div>
+    </div>
+  )}
+
+  // ─── SPRECHEN SECTION ───
+  if (section === 'sprechen') {
+    const SP = E.sprechen
+    return (
+    <div className="fade-up">
+      <TimerBar />
+      <h2 style={{ fontFamily: 'var(--fd)', marginBottom: 4 }}>🗣️ Sprechen — Speaking</h2>
+      <p className="section-desc" style={{ marginBottom: 16 }}>Practice the speaking section. In the real exam, this is a group test with other candidates and two examiners.</p>
+
+      <h3 style={{ fontFamily: 'var(--fd)', fontSize: 15, marginBottom: 8, color: 'var(--purple)' }}>Teil 1 — {SP.teil1.title}</h3>
+      <div className="card">
+        <p style={{ fontSize: 12, color: 'var(--text-2)', marginBottom: 10 }}>{SP.teil1.instructions}</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 6 }}>
+          {SP.teil1.prompts.map((p,i) => (
+            <div key={i} style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--rs)', padding: '14px 10px', textAlign: 'center', fontFamily: 'var(--fd)', fontSize: 18, fontWeight: 700 }}>{p}</div>
+          ))}
+        </div>
+        <div style={{ marginTop: 12, padding: 12, background: 'var(--green-dim)', borderRadius: 'var(--rs)', border: '1px solid var(--green)' }}>
+          <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--green)', marginBottom: 6 }}>💡 Beispielantworten für Merrill:</div>
+          {SP.teil1.sampleAnswers.map((s,i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3 }}>
+              <span style={{ fontSize: 13, color: 'var(--text-2)' }}>{s}</span>
+              <SpeakBtn text={s} rate={0.8} />
+            </div>
+          ))}
+        </div>
+        <p style={{ fontSize: 11, color: 'var(--accent)', marginTop: 8 }}>💡 {SP.teil1.tip}</p>
+      </div>
+
+      <h3 style={{ fontFamily: 'var(--fd)', fontSize: 15, margin: '20px 0 8px', color: 'var(--purple)' }}>Teil 2 — {SP.teil2.title}</h3>
+      <div className="card">
+        <p style={{ fontSize: 12, color: 'var(--text-2)', marginBottom: 10 }}>{SP.teil2.instructions}</p>
+        {SP.teil2.themes.map((theme, ti) => (
+          <div key={ti} style={{ marginBottom: 14 }}>
+            <div style={{ fontSize: 11, color: 'var(--accent)', fontFamily: 'var(--fm)', fontWeight: 600, marginBottom: 6 }}>Thema: {theme.name}</div>
+            <div className="prompt-cards">
+              {theme.cards.map((c,ci) => <div key={ci} className="prompt-card">{c}</div>)}
+            </div>
+          </div>
+        ))}
+        <p style={{ fontSize: 11, color: 'var(--accent)' }}>💡 {SP.teil2.tip}</p>
+      </div>
+
+      <h3 style={{ fontFamily: 'var(--fd)', fontSize: 15, margin: '20px 0 8px', color: 'var(--purple)' }}>Teil 3 — {SP.teil3.title}</h3>
+      <div className="card">
+        <p style={{ fontSize: 12, color: 'var(--text-2)', marginBottom: 10 }}>{SP.teil3.instructions}</p>
+        <div className="prompt-cards">
+          {SP.teil3.items.map((item, i) => <div key={i} className="prompt-card">{item}</div>)}
+        </div>
+        <p style={{ fontSize: 11, color: 'var(--accent)', marginTop: 8 }}>💡 {SP.teil3.tip}</p>
+      </div>
+    </div>
+  )}
+
+  return null
+}
+
 // ─── AI TUTOR COMPONENT ───
 const AI_TOPICS = [
   { id: 'vocab', label: '📝 Vocabulary', desc: 'Generate words for any topic', prompts: ['At the restaurant', 'At the doctor', 'Job interview', 'Apartment hunting', 'At the supermarket', 'Small talk with colleagues', 'Hamburg tourism', 'German bureaucracy'] },
@@ -1317,6 +1681,7 @@ export default function App() {
       { id: 'grammar', label: 'Grammatik', icon: '📐' },
     ]},
     { label: 'EXAM PREP', items: [
+      { id: 'goethe', label: 'Prüfung A1', icon: '🎓' },
       { id: 'reading', label: 'Lesen', icon: '📖' },
       { id: 'listening', label: 'Hören', icon: '👂' },
       { id: 'writing', label: 'Schreiben', icon: '✍️' },
@@ -1531,6 +1896,19 @@ export default function App() {
                 </div>
                 <button className="link-btn" onClick={() => setPage('phrases')}>See all phrases →</button>
               </div>
+            </div>
+          )}
+
+          {/* ════ GOETHE EXAM ════ */}
+          {page === 'goethe' && (
+            <div className="fade-up">
+              <div className="section-header">
+                <div>
+                  <h2>🎓 Prüfung A1 — Goethe-Zertifikat</h2>
+                  <p className="section-desc">Official Start Deutsch 1 model exam. Practice all 4 sections with timer, auto-scoring, and TTS audio.</p>
+                </div>
+              </div>
+              <GoetheExam />
             </div>
           )}
 
