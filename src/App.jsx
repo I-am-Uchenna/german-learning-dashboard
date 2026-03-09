@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import {
   LEVELS, EXAM_CATEGORIES, VOCABULARY, GRAMMAR, READING_EXERCISES,
   WRITING_EXERCISES, SPEAKING_EXERCISES, LISTENING_EXERCISES,
-  DAILY_PHRASES, STUDY_PLAN, PRONUNCIATION, GUIDED_LESSONS, numberToGerman
+  DAILY_PHRASES, STUDY_PLAN, PRONUNCIATION, GUIDED_LESSONS, numberToGerman, CONVERSATIONS
 } from './data'
 import { LID_QUESTIONS } from './lid_data'
 import './styles.css'
@@ -127,73 +127,124 @@ function PronunciationCheck({ targetText }) {
   )
 }
 
-// ─── SRS (Spaced Repetition System) ───
+// ─── SRS (Spaced Repetition System) — COMPLETE REWRITE ───
 const SRS_KEY = 'deutsch-lernen-srs'
 function loadSRS() { try { return JSON.parse(localStorage.getItem(SRS_KEY)) || {} } catch { return {} } }
 function saveSRS(data) { localStorage.setItem(SRS_KEY, JSON.stringify(data)) }
 
-function getSRSCard(srs, id) {
-  return srs[id] || { interval: 0, ease: 2.5, nextReview: 0, reps: 0 }
-}
-
 function updateSRS(srs, id, quality) {
-  // SM-2 algorithm simplified
-  // quality: 0 = wrong, 1 = hard, 2 = good, 3 = easy
-  const card = getSRSCard(srs, id)
-  let { interval, ease, reps } = card
+  // quality: 0=again, 1=hard, 2=good, 3=easy
+  const card = srs[id] || { interval: 0, ease: 2.5, reps: 0, lapses: 0 }
+  let { interval, ease, reps, lapses } = card
   const now = Date.now()
+  const DAY = 86400000
 
-  if (quality < 1) {
-    // Reset on fail
+  if (quality === 0) {
+    // AGAIN: reset, show again in 1 minute (within session) or 10 minutes
     interval = 0
     reps = 0
-  } else {
-    if (reps === 0) interval = 1 // 1 day
-    else if (reps === 1) interval = 3 // 3 days
-    else interval = Math.round(interval * ease)
-    reps += 1
-    ease = Math.max(1.3, ease + (0.1 - (3 - quality) * (0.08 + (3 - quality) * 0.02)))
+    lapses = (lapses || 0) + 1
+    ease = Math.max(1.3, ease - 0.2)
+    return { ...srs, [id]: { interval, ease, reps, lapses, nextReview: now + 60000, lastReview: now } }
   }
+  
+  if (quality === 1) {
+    // HARD: small step, reduce ease slightly
+    if (reps === 0) interval = 1
+    else interval = Math.max(1, Math.round(interval * 1.2))
+    ease = Math.max(1.3, ease - 0.15)
+  } else if (quality === 2) {
+    // GOOD: normal progression
+    if (reps === 0) interval = 1
+    else if (reps === 1) interval = 3
+    else interval = Math.round(interval * ease)
+  } else {
+    // EASY: big jump, increase ease
+    if (reps === 0) interval = 4
+    else interval = Math.round(interval * ease * 1.3)
+    ease += 0.15
+  }
+  
+  reps += 1
+  return { ...srs, [id]: { 
+    interval, 
+    ease: Math.round(ease * 100) / 100, 
+    reps, 
+    lapses: lapses || 0,
+    nextReview: now + interval * DAY, 
+    lastReview: now 
+  }}
+}
 
-  return {
-    ...srs,
-    [id]: {
-      interval,
-      ease: Math.round(ease * 100) / 100,
-      nextReview: now + interval * 24 * 60 * 60 * 1000,
-      reps,
-      lastReview: now,
+function buildSRSQueue(srs, allIds, maxNew = 10, maxReview = 20) {
+  const now = Date.now()
+  const due = []
+  const newCards = []
+  
+  for (const id of allIds) {
+    const card = srs[id]
+    if (!card) {
+      newCards.push(id) // Never seen
+    } else if (card.nextReview <= now) {
+      due.push({ id, overdue: now - card.nextReview }) // Due for review
     }
   }
+  
+  // Sort due cards: most overdue first
+  due.sort((a, b) => b.overdue - a.overdue)
+  
+  // Take maxReview due cards + maxNew new cards
+  const reviewIds = due.slice(0, maxReview).map(d => d.id)
+  const newIds = newCards.slice(0, maxNew)
+  
+  return { reviewIds, newIds, totalDue: due.length, totalNew: newCards.length }
 }
 
-function getDueCards(srs, allIds) {
-  const now = Date.now()
-  return allIds.filter(id => {
-    const card = srs[id]
-    if (!card) return true // New card = due
-    return card.nextReview <= now
-  })
-}
-
-// ─── SRS REVIEW COMPONENT ───
+// ─── SRS REVIEW COMPONENT (REWRITTEN) ───
 function SRSReview({ words, level }) {
   const [srs, setSrs] = useState(() => loadSRS())
+  const [queue, setQueue] = useState([])
   const [currentIdx, setCurrentIdx] = useState(0)
   const [flipped, setFlipped] = useState(false)
+  const [sessionStats, setSessionStats] = useState({ reviewed: 0, correct: 0, again: 0 })
   const [sessionDone, setSessionDone] = useState(false)
 
-  const dueIds = useMemo(() => getDueCards(srs, words.map(w => w.id)), [srs, words])
-  const dueWords = useMemo(() => words.filter(w => dueIds.includes(w.id)).slice(0, 20), [dueIds, words])
+  // Build queue on mount or when words change
+  useEffect(() => {
+    const { reviewIds, newIds } = buildSRSQueue(srs, words.map(w => w.id), 10, 20)
+    const combined = [...reviewIds, ...newIds]
+    setQueue(combined)
+    setCurrentIdx(0)
+    setFlipped(false)
+    setSessionDone(false)
+    setSessionStats({ reviewed: 0, correct: 0, again: 0 })
+  }, [words, level])
 
-  const current = dueWords[currentIdx]
+  const currentId = queue[currentIdx]
+  const current = words.find(w => w.id === currentId)
+  const cardData = srs[currentId]
+  const isNew = !cardData || cardData.reps === 0
 
   const rate = (quality) => {
-    const newSrs = updateSRS(srs, current.id, quality)
+    const newSrs = updateSRS(srs, currentId, quality)
     setSrs(newSrs)
     saveSRS(newSrs)
 
-    if (currentIdx < dueWords.length - 1) {
+    setSessionStats(prev => ({
+      reviewed: prev.reviewed + 1,
+      correct: prev.correct + (quality >= 2 ? 1 : 0),
+      again: prev.again + (quality === 0 ? 1 : 0),
+    }))
+
+    // If "Again", re-add card near end of queue
+    if (quality === 0 && currentIdx < queue.length - 1) {
+      const insertPos = Math.min(currentIdx + 5, queue.length)
+      const newQueue = [...queue]
+      newQueue.splice(insertPos, 0, currentId)
+      setQueue(newQueue)
+    }
+
+    if (currentIdx < queue.length - 1) {
       setCurrentIdx(currentIdx + 1)
       setFlipped(false)
     } else {
@@ -201,53 +252,81 @@ function SRSReview({ words, level }) {
     }
   }
 
-  if (!dueWords.length || sessionDone) {
-    const reviewed = Object.keys(srs).length
+  // Stats
+  const { totalDue, totalNew } = buildSRSQueue(srs, words.map(w => w.id), 10, 20)
+  const totalInSRS = Object.keys(srs).filter(k => words.some(w => w.id === k)).length
+
+  if (!queue.length || sessionDone) {
     return (
-      <div className="card" style={{ textAlign: 'center', padding: 40 }}>
-        <span style={{ fontSize: 48 }}>🎉</span>
-        <h3 style={{ fontFamily: 'var(--font-display)', marginTop: 12 }}>
+      <div className="card" style={{ textAlign: 'center', padding: 32 }}>
+        <span style={{ fontSize: 44 }}>{sessionDone ? '🎉' : '✅'}</span>
+        <h3 style={{ fontFamily: 'var(--fd)', marginTop: 10, fontSize: 18 }}>
           {sessionDone ? 'Session Complete!' : 'All caught up!'}
         </h3>
-        <p style={{ color: 'var(--text-3)', marginTop: 8 }}>
-          {sessionDone ? `Reviewed ${dueWords.length} cards. Come back later for more.` : `${reviewed} words in your SRS. No reviews due right now.`}
-        </p>
-        {sessionDone && <button className="primary-btn" onClick={() => { setSessionDone(false); setCurrentIdx(0) }} style={{ marginTop: 16 }}>Review Again</button>}
+        {sessionDone ? (
+          <div style={{ color: 'var(--text-2)', marginTop: 8, fontSize: 13 }}>
+            <p>Reviewed: <strong>{sessionStats.reviewed}</strong> cards</p>
+            <p>Correct: <strong>{sessionStats.correct}</strong> · Again: <strong>{sessionStats.again}</strong></p>
+            <p style={{ marginTop: 8, color: 'var(--text-3)', fontSize: 12 }}>{totalInSRS} words in SRS · {totalDue} due · {totalNew} new available</p>
+          </div>
+        ) : (
+          <p style={{ color: 'var(--text-3)', marginTop: 8, fontSize: 13 }}>{totalInSRS} words in your SRS. No reviews due. Come back later or add new words through vocabulary practice.</p>
+        )}
+        {sessionDone && <button className="primary-btn" onClick={() => { 
+          const { reviewIds, newIds } = buildSRSQueue(srs, words.map(w => w.id), 10, 20)
+          setQueue([...reviewIds, ...newIds]); setCurrentIdx(0); setFlipped(false); setSessionDone(false)
+          setSessionStats({ reviewed: 0, correct: 0, again: 0 })
+        }} style={{ marginTop: 14 }}>Start New Session</button>}
       </div>
     )
   }
 
+  if (!current) { setCurrentIdx(c => c + 1); return null }
+
+  const nextInterval = cardData ? `Next: ${cardData.interval}d` : 'New card'
+
   return (
     <div className="srs-review">
-      <div className="lid-progress-bar"><div className="lid-progress-fill" style={{ width: `${((currentIdx + 1) / dueWords.length) * 100}%`, background: 'var(--green)' }} /></div>
-      <div className="lid-counter">{currentIdx + 1} / {dueWords.length} due · {Object.keys(srs).length} total in SRS</div>
+      <div className="lid-progress-bar"><div className="lid-progress-fill" style={{ width: `${((currentIdx + 1) / queue.length) * 100}%`, background: 'var(--green)' }} /></div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+        <span className="lid-counter">{currentIdx + 1} / {queue.length}</span>
+        <span className="lid-counter" style={{ color: isNew ? 'var(--blue)' : 'var(--text-3)' }}>{isNew ? '🆕 New card' : `📊 ${nextInterval} · ${cardData?.reps || 0} reviews`}</span>
+      </div>
 
       <div className={`flashcard ${flipped ? 'flipped' : ''}`} onClick={() => setFlipped(!flipped)}>
         <div className="flashcard-inner">
           <div className="flashcard-front">
             <span className="card-theme">{current.theme}</span>
             <span className="card-word">{current.article ? `${current.article} ` : ''}{current.word}</span>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
               <SpeakBtn text={`${current.article || ''} ${current.word}`} rate={0.7} />
               <PronunciationCheck targetText={current.word} />
             </div>
-            <span className="card-hint">tap to reveal · 🎙️ to test pronunciation</span>
+            <span className="card-hint">tap to reveal meaning</span>
           </div>
           <div className="flashcard-back">
             <span className="card-meaning">{current.meaning}</span>
             <span className="card-example">"{current.example}"</span>
             <SpeakBtn text={current.example} rate={0.75} />
-            <span className="card-hint">Rate your recall:</span>
+            <span className="card-hint">How well did you know this?</span>
           </div>
         </div>
       </div>
 
       {flipped && (
         <div className="srs-buttons">
-          <button className="srs-btn srs-again" onClick={() => rate(0)}>❌ Again</button>
-          <button className="srs-btn srs-hard" onClick={() => rate(1)}>😐 Hard</button>
-          <button className="srs-btn srs-good" onClick={() => rate(2)}>👍 Good</button>
-          <button className="srs-btn srs-easy" onClick={() => rate(3)}>⚡ Easy</button>
+          <button className="srs-btn srs-again" onClick={() => rate(0)}>
+            <div>❌ Again</div><div style={{fontSize:9,opacity:0.7}}>1 min</div>
+          </button>
+          <button className="srs-btn srs-hard" onClick={() => rate(1)}>
+            <div>😐 Hard</div><div style={{fontSize:9,opacity:0.7}}>{cardData ? `${Math.max(1, Math.round((cardData.interval || 1) * 1.2))}d` : '1d'}</div>
+          </button>
+          <button className="srs-btn srs-good" onClick={() => rate(2)}>
+            <div>👍 Good</div><div style={{fontSize:9,opacity:0.7}}>{cardData?.reps >= 1 ? `${Math.round((cardData.interval || 1) * (cardData.ease || 2.5))}d` : '1d'}</div>
+          </button>
+          <button className="srs-btn srs-easy" onClick={() => rate(3)}>
+            <div>⚡ Easy</div><div style={{fontSize:9,opacity:0.7}}>{cardData ? `${Math.round((cardData.interval || 1) * (cardData.ease || 2.5) * 1.3)}d` : '4d'}</div>
+          </button>
         </div>
       )}
     </div>
@@ -1229,6 +1308,7 @@ export default function App() {
       { id: 'daily', label: 'Daily Practice', icon: '🎯' },
       { id: 'srs', label: 'SRS Review', icon: '🧠' },
       { id: 'lessons', label: 'Lessons', icon: '📚' },
+      { id: 'conversations', label: 'Gespräche', icon: '💬' },
       { id: 'alphabet', label: 'Alphabet', icon: '🔤' },
       { id: 'numbers', label: 'Zahlen', icon: '🔢' },
     ]},
@@ -1274,7 +1354,8 @@ export default function App() {
   // Smart CTA for dashboard
   const getSmartCTA = () => {
     const srsData = loadSRS()
-    const dueCount = getDueCards(srsData, vocabForLevel.map(w => w.id)).length
+    const { totalDue, totalNew } = buildSRSQueue(srsData, vocabForLevel.map(w => w.id))
+    const dueCount = totalDue + Math.min(totalNew, 10)
     const lessonsCompleted = Object.keys(progress.lessons || {}).length
     const nextLesson = GUIDED_LESSONS[lessonsCompleted]
     
@@ -1545,6 +1626,59 @@ export default function App() {
               )}
             </div>
           )}
+
+          {/* ════ CONVERSATIONS ════ */}
+          {page === 'conversations' && (() => {
+            const convos = CONVERSATIONS.filter(c => c.level === level)
+            return (
+            <div className="fade-up">
+              <div className="section-header">
+                <div>
+                  <h2>💬 Gespräche — {level}</h2>
+                  <p className="section-desc">{convos.length} real-life conversation scenarios with translations. Tap 🔊 to hear each line.</p>
+                </div>
+              </div>
+              {convos.map((conv, ci) => (
+                <details key={conv.id} className="card" style={{ cursor: 'pointer' }}>
+                  <summary style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 600, fontSize: 14 }}>
+                    <span>{conv.title}</span>
+                    <span style={{ fontSize: 10, color: 'var(--text-3)', fontFamily: 'var(--fm)' }}>{conv.lines.length} lines</span>
+                  </summary>
+                  <div style={{ marginTop: 14 }}>
+                    {conv.situation && <p style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 10, fontStyle: 'italic' }}>{conv.situation}</p>}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      {conv.lines.map((line, li) => (
+                        <div key={li} style={{
+                          padding: '8px 12px', borderRadius: 'var(--rs)', 
+                          background: li % 2 === 0 ? 'var(--accent-dim)' : 'var(--bg)',
+                          border: '1px solid var(--border)', display: 'flex', alignItems: 'flex-start', gap: 8,
+                        }}>
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontWeight: 600, fontSize: 13 }}>{line.de}</div>
+                            <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 2 }}>{line.en}</div>
+                          </div>
+                          <SpeakBtn text={line.de} rate={0.8} />
+                        </div>
+                      ))}
+                    </div>
+                    {conv.keyPhrases && conv.keyPhrases.length > 0 && (
+                      <div style={{ marginTop: 12, padding: '10px 14px', background: 'var(--green-dim)', borderRadius: 'var(--rs)', border: '1px solid var(--green)' }}>
+                        <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--green)', marginBottom: 4 }}>🔑 Key Phrases</div>
+                        {conv.keyPhrases.map((p, i) => <div key={i} style={{ fontSize: 12, color: 'var(--text-2)' }}>• {p}</div>)}
+                      </div>
+                    )}
+                    {conv.culturalNote && (
+                      <div style={{ marginTop: 8, padding: '8px 12px', background: 'var(--accent-dim)', borderRadius: 'var(--rs)', border: '1px solid var(--accent)' }}>
+                        <div style={{ fontSize: 11, color: 'var(--accent)' }}>🇩🇪 {conv.culturalNote}</div>
+                      </div>
+                    )}
+                  </div>
+                </details>
+              ))}
+              {!convos.length && <div className="empty-state"><p>No conversations for {level} yet.</p></div>}
+            </div>
+            )
+          })()}
 
           {/* ════ NUMBERS DRILL ════ */}
           {page === 'numbers' && (

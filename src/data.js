@@ -29,6 +29,10 @@ export const GUIDED_LESSONS = GL;
 export const NUMBER_WORDS = NW;
 export const numberToGerman = NTG;
 
+// ─── CONVERSATIONS ───
+import { CONVERSATIONS as CONV } from './data/conversations'
+export const CONVERSATIONS = CONV;
+
 // ─── PRONUNCIATION GUIDE (Day 1 essential) ───
 export const PRONUNCIATION = {
   alphabet: [
